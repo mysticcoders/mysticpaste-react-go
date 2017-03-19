@@ -1,0 +1,63 @@
+package main
+
+import (
+	"net/http"
+
+	"github.com/gorilla/mux"
+)
+
+type Route struct {
+	Name        string
+	Method      string
+	Pattern     string
+	HandlerFunc http.HandlerFunc
+}
+
+type Routes []Route
+
+func NewRouter() *mux.Router {
+
+	router := mux.NewRouter().StrictSlash(true)
+	for _, route := range routes {
+		router.
+			Methods(route.Method).
+			Path(route.Pattern).
+			Name(route.Name).
+			Handler(route.HandlerFunc)
+	}
+
+	return router
+}
+
+var routes = Routes{
+	Route{
+		"PasteIndex",
+		"GET",
+		"/pastes",
+		PasteIndex,
+	},
+	Route{
+		"PasteShow",
+		"GET",
+		"/pastes/{pasteId}",
+		PasteShow,
+	},
+	Route{
+		"PasteCreate",
+		"POST",
+		"/pastes",
+		PasteCreate,
+	},
+	Route{
+		"PasteDelete",
+		"DELETE",
+		"/pastes/{pasteId}",
+		PasteDelete,
+	},
+	Route{
+		"PasteUpdate",
+		"PATCH",
+		"/pastes/{pasteId}",
+		PasteUpdate,
+	},
+}

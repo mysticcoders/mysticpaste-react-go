@@ -1,0 +1,14 @@
+package: .
+import:
+- package: github.com/gorilla/handlers
+  version: ^1.2.0
+- package: github.com/gorilla/mux
+  version: ^1.3.0
+- package: github.com/jinzhu/gorm
+  version: ^1.0.0
+  subpackages:
+  - dialects/postgres
+- package: github.com/nu7hatch/gouuid
+- package: github.com/spf13/viper
+- package: github.com/asdine/storm
+  version: ^0.7.0

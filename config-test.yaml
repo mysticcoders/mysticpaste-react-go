@@ -1,0 +1,7 @@
+db:
+hostname: 'localhost'
+  username: 'admin'
+  password: 'password'
+  dbname: 'mysticpaste-test'
+api:
+admin_key: 'b9918d02-3a0c-4e5f-87d8-f7b222628f8e'
