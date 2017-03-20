@@ -39,6 +39,7 @@ func BaseHTTPTest(verb string, url string, jsonStr []byte, headers Headers) (*js
 	}
 
 	r.Header.Set("Content-Type", "application/json")
+	r.RemoteAddr = "127.0.0.1"
 
 	if headers != nil {
 		for _, header := range headers {
@@ -50,21 +51,11 @@ func BaseHTTPTest(verb string, url string, jsonStr []byte, headers Headers) (*js
 	w := httptest.NewRecorder()
 	router.ServeHTTP(w, r)
 
-	//log.Printf("%+v", w.Body)
 	decoder := json.NewDecoder(w.Body)
 
 
 	// TODO rather than return a decoder, perhaps we can return a struct that can cover a JSON object case
 	return decoder, w
-	//log.Printf("%+v", decoder)
-	//var paste Paste
-	//err = decoder.Decode(&paste)
-	//
-	//if err != nil {
-	//	log.Print("No JSON in Body")
-	//	return Paste{}, w
-	//}
-	//return paste, w
 }
 
 func TestPasteCreateHandler(t *testing.T) {
@@ -74,8 +65,8 @@ func TestPasteCreateHandler(t *testing.T) {
 
 	var paste Paste
 	_ = decoder.Decode(&paste)
-
 	assert.Equal(t, http.StatusCreated, resp.Code)
+	//assert.Equal(t, "127.0.0.1", paste.ClientIP)
 	assert.Equal(t, "application/json", resp.Header().Get("Content-Type"))
 	assert.Equal(t, "Hello, World!", paste.Content)
 }

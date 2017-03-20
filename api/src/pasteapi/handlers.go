@@ -51,7 +51,7 @@ func PasteCreate(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte("No paste content found"))
 		return
 	} else {
-		paste.ClientIP = r.RemoteAddr
+		paste.ClientIP = getIPAddress(r)
 
 		if UserToken != "" {
 			u, _ := uuid.ParseHex(UserToken)
@@ -71,11 +71,12 @@ func PasteCreate(w http.ResponseWriter, r *http.Request) {
 		}
 		w.Header().Set(ApiTokenHeaderKey, paste.UserToken)
 
-		paste = savePaste(paste)
+		var savedPaste Paste
+		savedPaste = savePaste(paste)
 
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusCreated)
-		json.NewEncoder(w).Encode(paste)
+		json.NewEncoder(w).Encode(savedPaste)
 	}
 }
 

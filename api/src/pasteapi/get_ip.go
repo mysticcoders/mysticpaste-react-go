@@ -44,5 +44,9 @@ func getIPAddress(r *http.Request) string {
         }
     }
 
-    return "No Public IP"
+	if len(r.RemoteAddr) > 0 {
+		return r.RemoteAddr
+	} else {
+		return "No Public IP"
+	}
 }
