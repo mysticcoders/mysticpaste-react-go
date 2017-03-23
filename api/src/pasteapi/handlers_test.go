@@ -21,28 +21,44 @@ type Header struct {
 type Headers []Header
 
 
-func BaseHTTPTest(verb string, url string, jsonStr []byte, headers Headers) (*json.Decoder, *httptest.ResponseRecorder) {
+type HTTPTest struct {
+	Verb string
+	URL string
+	jsonStr []byte
+	headers Headers
+	fakeIP string
+}
+
+func BaseHTTPTest(data *HTTPTest) (*json.Decoder, *httptest.ResponseRecorder) {
+	if data == nil {
+		log.Fatal("Test object was empty")
+	}
 	var err error
 
 	var buffer io.Reader
 
-	if jsonStr != nil {
-		buffer = bytes.NewBuffer(jsonStr)
+	if data.jsonStr != nil {
+		buffer = bytes.NewBuffer(data.jsonStr)
 	} else {
 		buffer = nil
 	}
 
-	r, err := http.NewRequest(verb, url, buffer)
+	r, err := http.NewRequest(data.Verb, data.URL, buffer)
 
 	if err != nil {
 		log.Fatal("Uh oh, something went wrong")
 	}
 
 	r.Header.Set("Content-Type", "application/json")
-	r.RemoteAddr = "127.0.0.1"
 
-	if headers != nil {
-		for _, header := range headers {
+	if data.fakeIP != "" {
+		r.RemoteAddr = data.fakeIP
+	} else {
+		r.RemoteAddr = "127.0.0.1"
+	}
+
+	if data.headers != nil {
+		for _, header := range data.headers {
 			r.Header.Set(header.Key, header.Value)
 		}
 	}
@@ -61,7 +77,7 @@ func BaseHTTPTest(verb string, url string, jsonStr []byte, headers Headers) (*js
 func TestPasteCreateHandler(t *testing.T) {
 	var jsonStr = []byte(`{"content":"Hello, World!", "language": "Java"}`)
 
-	decoder, resp := BaseHTTPTest("POST", "/pastes", jsonStr, nil)
+	decoder, resp := BaseHTTPTest(&HTTPTest{Verb: "POST", URL: "/pastes", jsonStr: jsonStr})
 
 	var paste Paste
 	_ = decoder.Decode(&paste)
@@ -84,7 +100,8 @@ func TestPasteCreateWithTokenHandler(t *testing.T) {
 			ApiTokenHeaderKey, pastebinUserToken,
 		},
 	}
-	decoder, resp := BaseHTTPTest("POST", "/pastes", jsonStr, headers)
+
+	decoder, resp := BaseHTTPTest(&HTTPTest{Verb: "POST", URL: "/pastes", jsonStr: jsonStr, headers: headers})
 
 	var paste Paste
 	_ = decoder.Decode(&paste)
@@ -103,14 +120,15 @@ func TestPasteCreateWithBadTokenHandler(t *testing.T) {
 			ApiTokenHeaderKey, "ImABadTokenNotUuid",
 		},
 	}
-	_, resp := BaseHTTPTest("POST", "/pastes", jsonStr, headers)
+	_, resp := BaseHTTPTest(&HTTPTest{Verb: "POST", URL: "/pastes", jsonStr: jsonStr, headers: headers})
 
 	assert.Equal(t, http.StatusBadRequest, resp.Code)
 }
 
 func TestPasteCreateWithNoData(t *testing.T) {
 	var jsonStr = []byte("{}")
-	_, resp := BaseHTTPTest("POST", "/pastes", jsonStr, nil)
+
+	_, resp := BaseHTTPTest(&HTTPTest{Verb: "POST", URL: "/pastes", jsonStr: jsonStr})
 
 	assert.Equal(t, http.StatusBadRequest, resp.Code)
 }
@@ -118,14 +136,14 @@ func TestPasteCreateWithNoData(t *testing.T) {
 func TestPasteShowHandler(t *testing.T) {
 	var jsonStr = []byte(`{"content":"Hello, World!", "language": "Java"}`)
 
-	decoder, resp := BaseHTTPTest("POST", "/pastes", jsonStr, nil)
+	decoder, resp := BaseHTTPTest(&HTTPTest{Verb: "POST", URL: "/pastes", jsonStr: jsonStr})
 
 	assert.Equal(t, http.StatusCreated, resp.Code)
 
 	var paste Paste
 	_ = decoder.Decode(&paste)
 
-	decoder, resp = BaseHTTPTest("GET", fmt.Sprintf("/pastes/%s", paste.ID), nil, nil)
+	decoder, resp = BaseHTTPTest(&HTTPTest{Verb: "GET", URL: fmt.Sprintf("/pastes/%s", paste.ID)})
 
 	var ret_paste Paste
 	_ = decoder.Decode(&ret_paste)
@@ -136,7 +154,7 @@ func TestPasteShowHandler(t *testing.T) {
 }
 
 func TestPasteShowItemNotFound(t *testing.T) {
-	_, resp := BaseHTTPTest("GET", fmt.Sprintf("/pastes/%s", "4abtW4saSf"), nil, nil)
+	_, resp := BaseHTTPTest(&HTTPTest{Verb: "GET", URL: fmt.Sprintf("/pastes/%s", "4abtW4saSf")})
 
 	assert.Equal(t, http.StatusNotFound, resp.Code)
 }
@@ -144,7 +162,7 @@ func TestPasteShowItemNotFound(t *testing.T) {
 func TestPasteDeleteHandler(t *testing.T) {
 	var jsonStr = []byte(`{"content":"Hello, World!", "language": "Java"}`)
 
-	decoder, resp := BaseHTTPTest("POST", "/pastes", jsonStr, nil)
+	decoder, resp := BaseHTTPTest(&HTTPTest{Verb: "POST", URL: "/pastes", jsonStr: jsonStr})
 
 	apiTokenKey := resp.Header().Get(ApiTokenHeaderKey)
 	assert.Equal(t, http.StatusCreated, resp.Code)
@@ -157,7 +175,8 @@ func TestPasteDeleteHandler(t *testing.T) {
 			ApiTokenHeaderKey, apiTokenKey,
 		},
 	}
-	_, resp = BaseHTTPTest("DELETE", fmt.Sprintf("/pastes/%s", paste.ID), nil, headers)
+
+	_, resp = BaseHTTPTest(&HTTPTest{Verb: "DELETE", URL: fmt.Sprintf("/pastes/%s", paste.ID), headers: headers})
 
 	assert.Equal(t, http.StatusAccepted, resp.Code)
 }
@@ -165,7 +184,7 @@ func TestPasteDeleteHandler(t *testing.T) {
 func TestPasteDeleteWrongToken(t *testing.T) {
 	var jsonStr = []byte(`{"content":"Hello, World!", "language": "Java"}`)
 
-	decoder, resp := BaseHTTPTest("POST", "/pastes", jsonStr, nil)
+	decoder, resp := BaseHTTPTest(&HTTPTest{Verb: "POST", URL: "/pastes", jsonStr: jsonStr})
 
 	//apiTokenKey := resp.Header().Get(ApiTokenHeaderKey)
 	assert.Equal(t, http.StatusCreated, resp.Code)
@@ -184,13 +203,13 @@ func TestPasteDeleteWrongToken(t *testing.T) {
 			ApiTokenHeaderKey, badToken,
 		},
 	}
-	_, resp = BaseHTTPTest("DELETE", fmt.Sprintf("/pastes/%s", paste.ID), nil, headers)
+	_, resp = BaseHTTPTest(&HTTPTest{Verb: "DELETE", URL: fmt.Sprintf("/pastes/%s", paste.ID), headers: headers})
 
 	assert.Equal(t, http.StatusUnauthorized, resp.Code)
 }
 
 func TestPasteDeleteNotFound(t *testing.T) {
-	_, resp := BaseHTTPTest("DELETE", fmt.Sprintf("/pastes/%s", "5a32bz159g"), nil, nil)
+	_, resp := BaseHTTPTest(&HTTPTest{Verb: "DELETE", URL: fmt.Sprintf("/pastes/%s", "5a32bz159g")})
 
 	assert.Equal(t, http.StatusNotFound, resp.Code)
 }
@@ -198,7 +217,7 @@ func TestPasteDeleteNotFound(t *testing.T) {
 func TestPasteDeleteAdminToken(t *testing.T) {
 	var jsonStr = []byte(`{"content":"Hello, World!", "language": "Java"}`)
 
-	decoder, resp := BaseHTTPTest("POST", "/pastes", jsonStr, nil)
+	decoder, resp := BaseHTTPTest(&HTTPTest{Verb: "POST", URL: "/pastes", jsonStr: jsonStr})
 
 	assert.Equal(t, http.StatusCreated, resp.Code)
 
@@ -210,7 +229,7 @@ func TestPasteDeleteAdminToken(t *testing.T) {
 			ApiTokenHeaderKey, AdminKey,
 		},
 	}
-	_, resp = BaseHTTPTest("DELETE", fmt.Sprintf("/pastes/%s", paste.ID), nil, headers)
+	_, resp = BaseHTTPTest(&HTTPTest{Verb: "DELETE", URL: fmt.Sprintf("/pastes/%s", paste.ID), headers: headers})
 
 	assert.Equal(t, http.StatusAccepted, resp.Code)
 }
@@ -218,7 +237,7 @@ func TestPasteDeleteAdminToken(t *testing.T) {
 func TestPasteIndexHandler(t *testing.T) {
 	var jsonStr = []byte(`{"content":"TestPasteIndexHandler", "language": "Java"}`)
 
-	_, resp := BaseHTTPTest("POST", "/pastes", jsonStr, nil)
+	_, resp := BaseHTTPTest(&HTTPTest{Verb: "POST", URL: "/pastes", jsonStr: jsonStr})
 
 	apiTokenKey := resp.Header().Get(ApiTokenHeaderKey)
 	assert.Equal(t, http.StatusCreated, resp.Code)
@@ -229,7 +248,7 @@ func TestPasteIndexHandler(t *testing.T) {
 		},
 	}
 
-	decoder, resp := BaseHTTPTest("GET", "/pastes", nil, headers)
+	decoder, resp := BaseHTTPTest(&HTTPTest{Verb: "GET", URL: "/pastes", headers: headers})
 
 	var pasteResult PasteResult
 	_ = decoder.Decode(&pasteResult)
@@ -251,7 +270,7 @@ func TestPasteIndexWithNoPastes(t *testing.T) {
 		},
 	}
 
-	decoder, resp := BaseHTTPTest("GET", "/pastes", nil, headers)
+	decoder, resp := BaseHTTPTest(&HTTPTest{Verb: "GET", URL: "/pastes", headers: headers})
 
 	var pasteResult PasteResult
 	_ = decoder.Decode(&pasteResult)
@@ -262,7 +281,7 @@ func TestPasteIndexWithNoPastes(t *testing.T) {
 }
 
 func TestPasteIndexWithNoKey(t *testing.T) {
-	decoder, resp := BaseHTTPTest("GET", "/pastes", nil, nil)
+	decoder, resp := BaseHTTPTest(&HTTPTest{Verb: "GET", URL: "/pastes"})
 
 	var pasteResult PasteResult
 	_ = decoder.Decode(&pasteResult)
@@ -275,14 +294,14 @@ func TestPasteIndexWithNoKey(t *testing.T) {
 func TestPasteUpdateNotAdmin(t *testing.T) {
 	var jsonStr = []byte(`{"content":"TestPasteUpdateNotAdmin", "language": "Java"}`)
 
-	decoder, resp := BaseHTTPTest("POST", "/pastes", jsonStr, nil)
+	decoder, resp := BaseHTTPTest(&HTTPTest{Verb: "POST", URL: "/pastes", jsonStr: jsonStr})
 
 	var paste Paste
 	_ = decoder.Decode(&paste)
 
 	var abusedJsonStr = []byte(`{"abuse": true}`)
 
-	_, resp = BaseHTTPTest("PATCH", fmt.Sprintf("/pastes/%s", paste.ID), abusedJsonStr, nil)
+	_, resp = BaseHTTPTest(&HTTPTest{Verb: "PATCH", URL: fmt.Sprintf("/pastes/%s", paste.ID), jsonStr: abusedJsonStr})
 
 	assert.Equal(t, http.StatusUnauthorized, resp.Code)
 }
@@ -290,7 +309,7 @@ func TestPasteUpdateNotAdmin(t *testing.T) {
 func TestPasteUpdateAbuse(t *testing.T) {
 	var jsonStr = []byte(`{"content":"TestPasteUpdateAbuse", "language": "Java"}`)
 
-	decoder, resp := BaseHTTPTest("POST", "/pastes", jsonStr, nil)
+	decoder, resp := BaseHTTPTest(&HTTPTest{Verb: "POST", URL: "/pastes", jsonStr: jsonStr, fakeIP: "172.10.1.1"})
 
 	var paste Paste
 	_ = decoder.Decode(&paste)
@@ -303,15 +322,15 @@ func TestPasteUpdateAbuse(t *testing.T) {
 		},
 	}
 
-	_, resp = BaseHTTPTest("PATCH", fmt.Sprintf("/pastes/%s", paste.ID), abusedJsonStr, headers)
+	_, resp = BaseHTTPTest(&HTTPTest{Verb: "PATCH", URL: fmt.Sprintf("/pastes/%s", paste.ID), jsonStr: abusedJsonStr, headers: headers, fakeIP: "172.10.1.1"})
 
 	assert.Equal(t, http.StatusAccepted, resp.Code)
 }
 
-func TestPasteAbuseShow(t *testing.T) {
-	var jsonStr = []byte(`{"content":"TestPasteUpdateAbuse", "language": "Java"}`)
+func TestPasteCreateIgnoreIfAbuse(t *testing.T) {
+	var jsonStr = []byte(`{"content":"TestPasteCreateIgnoreIfAbuse", "language": "Java"}`)
 
-	decoder, resp := BaseHTTPTest("POST", "/pastes", jsonStr, nil)
+	decoder, resp := BaseHTTPTest(&HTTPTest{Verb: "POST", URL: "/pastes", jsonStr: jsonStr, fakeIP: "172.10.1.2"})
 
 	var paste Paste
 	_ = decoder.Decode(&paste)
@@ -324,12 +343,40 @@ func TestPasteAbuseShow(t *testing.T) {
 		},
 	}
 
-	_, resp = BaseHTTPTest("PATCH", fmt.Sprintf("/pastes/%s", paste.ID), abusedJsonStr, headers)
+	_, resp = BaseHTTPTest(&HTTPTest{Verb: "PATCH", URL: fmt.Sprintf("/pastes/%s", paste.ID), jsonStr: abusedJsonStr, headers: headers, fakeIP: "172.10.1.2"})
+
+	assert.Equal(t, http.StatusAccepted, resp.Code)
+
+	var jsonStr2 = []byte(`{"content":"TestPaseCreateIgnoreIfAbusePostAbuse", "language": "Java"}`)
+	_, resp = BaseHTTPTest(&HTTPTest{Verb: "POST", URL: "/pastes", jsonStr: jsonStr2, fakeIP: "172.10.1.2"})
+
+	var abusedPaste Paste
+
+	assert.True(t, DB.Where("content = ?", "TestPaseCreateIgnoreIfAbusePostAbuse").Find(&abusedPaste).RecordNotFound())
+}
+
+func TestPasteAbuseShow(t *testing.T) {
+	var jsonStr = []byte(`{"content":"TestPasteAbuseShow", "language": "Java"}`)
+
+	decoder, resp := BaseHTTPTest(&HTTPTest{Verb: "POST", URL: "/pastes", jsonStr: jsonStr, fakeIP: "172.10.1.3"})
+
+	var paste Paste
+	_ = decoder.Decode(&paste)
+
+	var abusedJsonStr = []byte(`{"abuse": true}`)
+
+	var headers = Headers{
+		Header{
+			ApiTokenHeaderKey, AdminKey,
+		},
+	}
+
+	_, resp = BaseHTTPTest(&HTTPTest{Verb: "PATCH", URL: fmt.Sprintf("/pastes/%s", paste.ID), jsonStr: abusedJsonStr, headers: headers, fakeIP: "172.10.1.3"})
 
 	assert.Equal(t, http.StatusAccepted, resp.Code)
 
 	// Should send back 404 because the paste is abusive
-	_, resp = BaseHTTPTest("GET", fmt.Sprintf("/pastes/%s", paste.ID), nil, nil)
+	_, resp = BaseHTTPTest(&HTTPTest{Verb: "GET", URL: fmt.Sprintf("/pastes/%s", paste.ID)})
 
 	assert.Equal(t, http.StatusNotFound, resp.Code)
 }
@@ -337,7 +384,7 @@ func TestPasteAbuseShow(t *testing.T) {
 func TestPasteAbuseShowIfAdmin(t *testing.T) {
 	var jsonStr = []byte(`{"content":"TestPasteUpdateAbuse", "language": "Java"}`)
 
-	decoder, resp := BaseHTTPTest("POST", "/pastes", jsonStr, nil)
+	decoder, resp := BaseHTTPTest(&HTTPTest{Verb: "POST", URL: "/pastes", jsonStr: jsonStr, fakeIP: "172.10.1.4"})
 
 	var paste Paste
 	_ = decoder.Decode(&paste)
@@ -350,13 +397,13 @@ func TestPasteAbuseShowIfAdmin(t *testing.T) {
 		},
 	}
 
-	_, resp = BaseHTTPTest("PATCH", fmt.Sprintf("/pastes/%s", paste.ID), abusedJsonStr, headers)
+	_, resp = BaseHTTPTest(&HTTPTest{Verb: "PATCH", URL: fmt.Sprintf("/pastes/%s", paste.ID), jsonStr: abusedJsonStr, headers: headers, fakeIP: "172.10.1.4"})
 
 	//log.Printf("%+v", resp)
 	assert.Equal(t, http.StatusAccepted, resp.Code)
 
 	// Should return the paste because we are an admin
-	_, resp = BaseHTTPTest("GET", fmt.Sprintf("/pastes/%s", paste.ID), nil, headers)
+	_, resp = BaseHTTPTest(&HTTPTest{Verb: "GET", URL: fmt.Sprintf("/pastes/%s", paste.ID), jsonStr: jsonStr, headers: headers})
 
 	assert.Equal(t, http.StatusOK, resp.Code)
 }
@@ -364,7 +411,7 @@ func TestPasteAbuseShowIfAdmin(t *testing.T) {
 func TestPasteAbuseIndex(t *testing.T) {
 	var jsonStr = []byte(`{"content":"TestPasteUpdateAbuse", "language": "Java"}`)
 
-	decoder, resp := BaseHTTPTest("POST", "/pastes", jsonStr, nil)
+	decoder, resp := BaseHTTPTest(&HTTPTest{Verb: "POST", URL: "/pastes", jsonStr: jsonStr, fakeIP: "172.10.1.5"})
 
 	apiTokenKey := resp.Header().Get(ApiTokenHeaderKey)
 
@@ -385,12 +432,12 @@ func TestPasteAbuseIndex(t *testing.T) {
 		},
 	}
 
-	_, resp = BaseHTTPTest("PATCH", fmt.Sprintf("/pastes/%s", paste.ID), abusedJsonStr, headers)
+	_, resp = BaseHTTPTest(&HTTPTest{Verb: "PATCH", URL: fmt.Sprintf("/pastes/%s", paste.ID), jsonStr: abusedJsonStr, headers: headers, fakeIP: "172.10.1.5"})
 
 	//log.Printf("%+v", resp)
 	assert.Equal(t, http.StatusAccepted, resp.Code)
 
-	decoder, resp = BaseHTTPTest("GET", "/pastes", nil, userHeaders)
+	decoder, resp = BaseHTTPTest(&HTTPTest{Verb: "GET", URL: "/pastes", headers: userHeaders})
 
 	var pasteResult PasteResult
 	_ = decoder.Decode(&pasteResult)

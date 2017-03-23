@@ -76,5 +76,10 @@ func savePaste(paste Paste) Paste {
 func updatePaste(paste Paste) Paste {
 	DB.Model(&paste).Update("abuse", paste.Abuse)
 
+	if paste.Abuse == true {
+		var abuseEntry Abuse
+		abuseEntry.ClientIP = paste.ClientIP
+		saveAbuse(abuseEntry)
+	}
 	return paste
 }

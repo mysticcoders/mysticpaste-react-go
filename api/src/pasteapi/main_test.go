@@ -32,6 +32,7 @@ func setup() error {
 	}
 
 	DB.AutoMigrate(&Paste{})
+	DB.AutoMigrate(&Abuse{})
 
 	return err
 }
@@ -39,7 +40,7 @@ func setup() error {
 func teardown() error {
 	var err error
 
-	DB.DropTable(&Paste{})
+	//DB.DropTable(&Paste{})
 
 	return err
 }
