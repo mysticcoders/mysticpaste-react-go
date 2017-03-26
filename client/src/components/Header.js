@@ -11,7 +11,7 @@ const Header = ({transitionToNewPastePage, transitionToHistoryPage, transitionTo
         <Navbar.Collapse>
         <Nav>
 					<NavItem onClick={transitionToNewPastePage}><i className="fa fa-plus" aria-hidden="true" /> New Paste</NavItem>
-          <NavItem onClick={transitionToHistoryPage}><i className="fa fa-history" aria-hidden="true" /> History</NavItem>
+          <NavItem onClick={transitionToHistoryPage}><i className="fa fa-history" aria-hidden="true" /> My Pastes</NavItem>
           <NavItem onClick={transitionToAboutPage}><i className="fa fa-question" aria-hidden="true" /> About</NavItem>
         </Nav>
         </Navbar.Collapse>
