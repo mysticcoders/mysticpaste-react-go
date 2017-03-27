@@ -48,6 +48,14 @@ func getPaste(id string) Paste {
 	return paste
 }
 
+func getPasteCount() int {
+	var count int
+	//// SELECT count(*) FROM deleted_users;
+	DB.Model(&Paste{}).Count(&count)
+
+	return count
+}
+
 func getPastesByUserToken(userToken string, abuse bool) []Paste {
 	var pastes []Paste
 	DB.Where("user_token = ? AND abuse = ?", userToken, abuse).Find(&pastes)

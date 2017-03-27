@@ -10,8 +10,9 @@ import (
 
 // PasteResult represents a return object for pastes
 type PasteResult struct {
-	Results []Paste `json:"results"`
-	Count   int     `json:"count"`
+	Results     []Paste `json:"results"`
+	Count       int     `json:"count"`
+	TotalCount  int  `json:"total_count"`
 }
 
 // PasteIndex processes a GET /pastes
@@ -28,6 +29,7 @@ func PasteIndex(w http.ResponseWriter, r *http.Request) {
 
 	pasteResult.Results = pastes
 	pasteResult.Count = len(pastes)
+	pasteResult.TotalCount = getPasteCount()
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(pasteResult)
 }
