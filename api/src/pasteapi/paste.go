@@ -1,6 +1,7 @@
 package main
 
 import (
+	"errors"
 	"log"
 	"math/rand"
 	"time"
@@ -38,14 +39,17 @@ func RandStringRunes(n int) string {
 	return string(b)
 }
 
-func getPaste(id string) Paste {
-	var paste Paste
+var ErrPasteNotFound = errors.New("Paste not found")
 
-	if DB.Where("id = ?", id).First(&paste).RecordNotFound() {
-		log.Print("record not found")
-		return Paste{}
+func getPaste(id string) (*Paste, error) {
+	paste := &Paste{}
+
+	if DB.Where("id = ?", id).First(paste).RecordNotFound() {
+		log.Print("paste record not found")
+		return nil, ErrPasteNotFound
 	}
-	return paste
+
+	return paste, nil
 }
 
 func getPasteCount() int {
@@ -81,13 +85,13 @@ func savePaste(paste Paste) Paste {
 	return paste
 }
 
-func updatePaste(paste Paste) Paste {
-	DB.Model(&paste).Update("abuse", paste.Abuse)
+func updatePaste(paste *Paste) {
+	DB.Model(paste).Update("abuse", paste.Abuse)
 
 	if paste.Abuse == true {
 		var abuseEntry Abuse
 		abuseEntry.ClientIP = paste.ClientIP
 		saveAbuse(abuseEntry)
 	}
-	return paste
+
 }

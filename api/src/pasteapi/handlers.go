@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"log"
 	"net/http"
 
 	"github.com/gorilla/mux"
@@ -10,9 +11,9 @@ import (
 
 // PasteResult represents a return object for pastes
 type PasteResult struct {
-	Results     []Paste `json:"results"`
-	Count       int     `json:"count"`
-	TotalCount  int  `json:"total_count"`
+	Results    []Paste `json:"results"`
+	Count      int     `json:"count"`
+	TotalCount int     `json:"total_count"`
 }
 
 // PasteIndex processes a GET /pastes
@@ -21,17 +22,14 @@ func PasteIndex(w http.ResponseWriter, r *http.Request) {
 	UserToken := r.Header.Get(ApiTokenHeaderKey)
 
 	//log.Printf("PasteIndex called with: %s", UserToken)
-	var pastes []Paste
-	pastes = getPastesByUserToken(UserToken, false)
+	pastes := getPastesByUserToken(UserToken, false)
 
 	//log.Printf("%+v", pastes)
-	var pasteResult PasteResult
-
-	pasteResult.Results = pastes
-	pasteResult.Count = len(pastes)
-	pasteResult.TotalCount = getPasteCount()
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(pasteResult)
+	json.NewEncoder(w).Encode(&PasteResult{
+		Results:    pastes,
+		Count:      len(pastes),
+		TotalCount: getPasteCount(),
+	})
 }
 
 // PasteCreate processes a PUT /pastes
@@ -94,22 +92,23 @@ func PasteDelete(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	pasteID := vars["pasteId"]
 
-	paste := getPaste(pasteID)
-
-	if (Paste{}) == paste {
+	paste, err := getPaste(pasteID)
+	if err != nil {
 		w.WriteHeader(http.StatusNotFound)
 		w.Write([]byte("Not Found"))
-	} else {
-		UserToken := r.Header.Get(ApiTokenHeaderKey)
-
-		if paste.UserToken == UserToken || UserToken == AdminKey {
-			deletePaste(paste)
-			w.WriteHeader(http.StatusAccepted)
-		} else {
-			w.WriteHeader(http.StatusUnauthorized)
-			w.Write([]byte("Unauthorized"))
-		}
+		return
 	}
+
+	UserToken := r.Header.Get(ApiTokenHeaderKey)
+
+	if paste.UserToken == UserToken || UserToken == AdminKey {
+		deletePaste(*paste)
+		w.WriteHeader(http.StatusAccepted)
+	} else {
+		w.WriteHeader(http.StatusUnauthorized)
+		w.Write([]byte("Unauthorized"))
+	}
+
 }
 
 // PasteShow processes a GET /pastes/pasteID
@@ -119,16 +118,18 @@ func PasteShow(w http.ResponseWriter, r *http.Request) {
 	UserToken := r.Header.Get(ApiTokenHeaderKey)
 
 	// log.Print(pasteID)
-	paste := getPaste(pasteID)
-
-	if (Paste{}) == paste {
+	paste, err := getPaste(pasteID)
+	if err != nil {
 		w.WriteHeader(http.StatusNotFound)
-		w.Write([]byte("Paste Not Found"))
-	} else if paste.Abuse && UserToken != AdminKey {
+		w.Write([]byte("Not Found"))
+		return
+	}
+
+	if paste.Abuse && UserToken != AdminKey {
 		w.WriteHeader(http.StatusNotFound)
 		w.Write([]byte("Paste Not Found"))
 	} else {
-		updateViewCount(paste)
+		updateViewCount(*paste)
 		w.Header().Set("Content-Type", "application/json")
 		json.NewEncoder(w).Encode(paste)
 	}
@@ -147,24 +148,32 @@ func PasteUpdate(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var paste Paste
-	paste = getPaste(pasteID)
-
-	decoder := json.NewDecoder(r.Body)
-	//log.Print(r.Body)
-
-	var abuseUpdate Paste
-	err := decoder.Decode(&abuseUpdate)
+	paste, err := getPaste(pasteID)
 	if err != nil {
-		panic(err)
+		w.WriteHeader(http.StatusNotFound)
+		w.Write([]byte("Not Found"))
+		return
 	}
 
+	decoder := json.NewDecoder(r.Body)
 	defer r.Body.Close()
+	//log.Print(r.Body)
+
+	abuseUpdate := &Paste{}
+	err = decoder.Decode(abuseUpdate)
+	if err != nil {
+		log.Print("Error: ", err)
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte("Something went wrong"))
+		return
+	}
 
 	paste.Abuse = abuseUpdate.Abuse
+
 	//log.Print(paste)
 
 	updatePaste(paste)
+
 	// decode the JSON body, and compare the json struct with original paste?
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusAccepted)
