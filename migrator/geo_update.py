@@ -28,7 +28,7 @@ for row in rows:
 
     cur.execute(update_sql, (geo_json, row[0],))
     print("executed")
-    time.sleep(0.1)
+    time.sleep(0.5)
 
 conn.commit()
 cur.close()
