@@ -1,28 +1,40 @@
-import React, { PropTypes } from 'react';
+import React, {PropTypes} from 'react';
 
-import { Navbar, Nav, NavItem } from 'react-bootstrap';
+import {Menu} from 'semantic-ui-react'
+
+const items = [
+    { key: 'editorials', active: true, name: 'Editorials' },
+    { key: 'review', name: 'Reviews' },
+    { key: 'events', name: 'Upcoming Events' },
+]
 
 const Header = ({transitionToNewPastePage, transitionToHistoryPage, transitionToAboutPage}) => {
-		return (
-      <Navbar inverse fixedTop fluid>
-				<Navbar.Header>
-					<Navbar.Toggle />
-				</Navbar.Header>
-        <Navbar.Collapse>
-        <Nav>
-					<NavItem onClick={transitionToNewPastePage}><i className="fa fa-plus" aria-hidden="true" /> New Paste</NavItem>
-          <NavItem onClick={transitionToHistoryPage}><i className="fa fa-history" aria-hidden="true" /> My Pastes</NavItem>
-          <NavItem onClick={transitionToAboutPage}><i className="fa fa-question" aria-hidden="true" /> About</NavItem>
-        </Nav>
-        </Navbar.Collapse>
-      </Navbar>
-	);
+
+    return (
+        <Menu fixed="top" inverted>
+            <Menu.Item
+                name='new_paste'
+                onClick={transitionToNewPastePage}>
+                <i className="fa fa-plus" aria-hidden="true"/>&nbsp;New Paste
+            </Menu.Item>
+            <Menu.Item
+                name='my_paste'
+                onClick={transitionToHistoryPage}>
+                <i className="fa fa-history" aria-hidden="true"/>&nbsp;My Paste
+            </Menu.Item>
+            <Menu.Item
+                name='about'
+                onClick={transitionToAboutPage}>
+                <i className="fa fa-question" aria-hidden="true"/>&nbsp;About
+            </Menu.Item>
+        </Menu>
+    );
 };
 
 Header.propTypes = {
-  transitionToAboutPage: PropTypes.func.isRequired,
-  transitionToNewPastePage: PropTypes.func.isRequired,
-  transitionToHistoryPage: PropTypes.func.isRequired
+    transitionToAboutPage: PropTypes.func.isRequired,
+    transitionToNewPastePage: PropTypes.func.isRequired,
+    transitionToHistoryPage: PropTypes.func.isRequired
 };
 
 export default Header;

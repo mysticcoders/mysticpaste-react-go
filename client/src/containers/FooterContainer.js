@@ -1,36 +1,33 @@
 import React from 'react';
 
-import { Link } from 'react-router';
+import {Link} from 'react-router';
+import {Container} from 'semantic-ui-react';
 import moment from 'moment';
 
 class FooterContainer extends React.Component {
 
-  // constructor(props, context) {
-  //   super(props, context);
-  // }
+    render() {
 
-  render() {
+        let currentYear = moment().format('Y');
 
-    let currentYear = moment().format('Y');
-
-    return (
-        <footer className="footer">
-            <div className="container">
+        return (
+            <footer className="footer">
+                <Container>
               <span className="text-muted">
               Copyright &copy; 2000 - {currentYear}
-              &nbsp;&mdash;&nbsp;
-              <a href="http://mysticcoders.com">Mystic Coders, LLC</a>
-              &nbsp;&mdash;&nbsp;
-              <a href="http://mysticcoders.com/blog">Blog</a>
-              &nbsp;&middot;&nbsp;
-              <a href="https://github.com/kinabalu/mysticpaste">Source</a>
-              &nbsp;&middot;&nbsp;
-              <Link to="/legal">Legal</Link>
+                  &nbsp;&mdash;&nbsp;
+                  <a href="http://mysticcoders.com">Mystic Coders, LLC</a>
+                  &nbsp;&mdash;&nbsp;
+                  <a href="http://mysticcoders.com/blog">Blog</a>
+                  &nbsp;&middot;&nbsp;
+                  <a href="https://github.com/kinabalu/mysticpaste">Source</a>
+                  &nbsp;&middot;&nbsp;
+                  <Link to="/legal">Legal</Link>
               </span>
-            </div>
-        </footer>
-    );
-  }
+                </Container>
+            </footer>
+        );
+    }
 }
 
 

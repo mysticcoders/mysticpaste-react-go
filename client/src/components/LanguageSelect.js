@@ -1,19 +1,12 @@
 import React, { PropTypes } from 'react';
 
 import * as langs from '../constants/languages';
-import { FormGroup, FormControl } from 'react-bootstrap';
+import { Dropdown } from 'semantic-ui-react';
 
 const LanguageSelect = ({handleChange, language}) => {
 
   return (
-    <FormGroup controlId="language">
-      <FormControl componentClass="select" value={language} onChange={handleChange} placeholder="select">
-        <option value="select" />
-        {langs.LANGUAGES.map(language =>
-          <option key={language.alias} value={language.alias}>{language.name}</option>
-        )}
-      </FormControl>
-    </FormGroup>
+    <Dropdown id="language" placeholder='Select your language' selection search onChange={handleChange} value={language} options={langs.LANGUAGES} />
   );
 };
 
