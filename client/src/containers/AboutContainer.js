@@ -52,6 +52,11 @@ class AboutContainer extends React.Component {
                         is <a href="https://github.com/kinabalu/mysticpaste">still available on GitHub</a>.
                     </p>
                     <p>
+                        The new version is using <a href="https://golang.org/">Golang</a> for the API, and <a href="https://facebook.github.io/react/">React</a>
+                        and <a href="http://redux.js.org/">Redux</a> on the frontend. You
+                        can <a href="https://github.com/kinabalu/mysticpaste-react-go">view the source code</a> and we are always accepting pull requests!
+                    </p>
+                    <p>
                         So by all means, paste your code, be merry, and be good to one another. If you post anything deemed spam
                         don't be surprised to find the paste gone at some point.
                     </p>

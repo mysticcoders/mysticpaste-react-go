@@ -1,6 +1,6 @@
 import React, {PropTypes} from 'react';
 import moment from 'moment';
-import './PasteEntry.scss';
+import './PasteEntry.css';
 
 import Highlight from 'react-highlight';
 import { Container } from 'semantic-ui-react';
