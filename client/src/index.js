@@ -7,7 +7,7 @@ import routes from './routes';
 import configureStore from './store/configureStore';
 import { syncHistoryWithStore } from 'react-router-redux';
 
-import 'semantic-ui/dist/semantic.css';
+import './semantic/semantic.min.css';
 import './index.css';
 
 // import 'bootstrap/dist/css/bootstrap.css';
