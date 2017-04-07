@@ -7,6 +7,7 @@ import (
 
 	"github.com/gorilla/mux"
 	uuid "github.com/nu7hatch/gouuid"
+	"strconv"
 )
 
 // PasteResult represents a return object for pastes
@@ -21,10 +22,37 @@ type PasteResult struct {
 func PasteIndex(w http.ResponseWriter, r *http.Request) {
 	UserToken := r.Header.Get(ApiTokenHeaderKey)
 
+	var offset int
+	offset_param := r.URL.Query().Get("offset")
+
+	if offset_param == "" {
+		offset = 0
+	} else {
+		var err error
+		offset, err = strconv.Atoi(offset_param)
+		if err != nil {
+			offset = 0
+		}
+	}
 	//log.Printf("PasteIndex called with: %s", UserToken)
-	pastes := getPastesByUserToken(UserToken, false)
+
+	var pastes []Paste
+	if UserToken == AdminKey {
+		var abuse bool
+		abuse_param := r.URL.Query().Get("abuse")
+
+		if abuse_param == "true" {
+			abuse = true
+		} else {
+			abuse = false
+		}
+		pastes = getPastes(abuse, offset)
+	} else {
+		pastes = getPastesByUserToken(UserToken, false, offset)
+	}
 
 	//log.Printf("%+v", pastes)
+	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(&PasteResult{
 		Results:    pastes,
 		Count:      len(pastes),

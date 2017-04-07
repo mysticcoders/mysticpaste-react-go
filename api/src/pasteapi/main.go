@@ -17,6 +17,8 @@ var DB *gorm.DB
 // AdminKey is used to have carte blanche authority over all pastes
 var AdminKey string
 
+var ItemsPerPage int
+
 var ApiTokenHeaderKey = string("X-Pastebin-User-Token")
 //	log "github.com/sirupsen/logrus"
 
@@ -31,6 +33,7 @@ func main() {
 	}
 
 	AdminKey = viper.GetString("api.admin_key")
+	ItemsPerPage = viper.GetInt("db.items_per_page")
 
 	router := NewRouter()
 
