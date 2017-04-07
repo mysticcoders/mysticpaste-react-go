@@ -3,7 +3,7 @@ import {connect} from 'react-redux';
 
 import * as pasteActions from '../actions/pasteActions';
 
-import {Container} from 'semantic-ui-react';
+import {Container, Header} from 'semantic-ui-react';
 
 import PasteEntry from '../components/PasteEntry';
 
@@ -33,9 +33,9 @@ class HistoryContainer extends React.Component {
         if (pastes.length === 0) {
             return (
                 <Container fluid>
-                    <p className="lead">
+                    <Header size="large">
                         No pastes found
-                    </p>
+                    </Header>
                 </Container>
             );
         }

@@ -52,8 +52,8 @@ class AboutContainer extends React.Component {
                         is <a href="https://github.com/kinabalu/mysticpaste">still available on GitHub</a>.
                     </p>
                     <p>
-                        The new version is using <a href="https://golang.org/">Golang</a> for the API, and <a href="https://facebook.github.io/react/">React</a>
-                        and <a href="http://redux.js.org/">Redux</a> on the frontend. You
+                        The new version is using <a href="https://golang.org/">Golang</a> for the API, and&nbsp;
+                        <a href="https://facebook.github.io/react/">React</a> and <a href="http://redux.js.org/">Redux</a> on the frontend. You
                         can <a href="https://github.com/kinabalu/mysticpaste-react-go">view the source code</a> and we are always accepting pull requests!
                     </p>
                     <p>
@@ -64,16 +64,21 @@ class AboutContainer extends React.Component {
 
                 <Header size="huge">Version</Header>
 
-                <Message
-                    header='Version'>
+                <Message>
                     {this.props.app_version}
+                </Message>
+
+                <Header size="huge">Request Deletion</Header>
+
+                <Message>
+                    If you feel a paste needs to be deleted and the cookie is gone, enter it below and it will be
+                    expunged.
                 </Message>
             </div>
                 /*
                  <ListGroupItem>
                  <p className="lead">
-                 If you feel a paste needs to be deleted and the cookie is gone, enter it below and it will be
-                 expunged.
+
                  </p>
                  <Form inline>
                  <FormGroup controlId="deletePasteId">
