@@ -70,7 +70,7 @@ func getPasteCount() int {
 func getPastesByUserToken(userToken string, abuse bool, offset int) []Paste {
 	var pastes []Paste
 
-	DB.Limit(ItemsPerPage).Offset(offset).Where("user_token = ? AND abuse = ?", userToken, abuse).Find(&pastes)
+	DB.Limit(ItemsPerPage).Offset(offset).Where("user_token = ? AND abuse = ?", userToken, abuse).Order("created_at desc").Find(&pastes)
 
 	return pastes
 }
