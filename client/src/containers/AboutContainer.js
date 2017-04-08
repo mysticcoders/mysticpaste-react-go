@@ -68,12 +68,13 @@ class AboutContainer extends React.Component {
                     {this.props.app_version}
                 </Message>
 
-                <Header size="huge">Request Deletion</Header>
 
-                <Message>
-                    If you feel a paste needs to be deleted and the cookie is gone, enter it below and it will be
-                    expunged.
-                </Message>
+                {/*<Header size="huge">Request Deletion</Header>*/}
+
+                {/*<Message>*/}
+                    {/*If you feel a paste needs to be deleted and the cookie is gone, enter it below and it will be*/}
+                    {/*expunged.*/}
+                {/*</Message>*/}
             </div>
                 /*
                  <ListGroupItem>
