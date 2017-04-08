@@ -52,6 +52,6 @@ func main() {
 	exposeOk := handlers.ExposedHeaders([]string{ApiTokenHeaderKey})
 	originsOk := handlers.AllowedOrigins([]string{"*"})
 	// originsOk := handlers.AllowedOrigins([]string{os.Getenv("ORIGIN_ALLOWED")})
-	methodsOk := handlers.AllowedMethods([]string{"GET", "HEAD", "POST", "PUT", "OPTIONS"})
+	methodsOk := handlers.AllowedMethods([]string{"GET", "HEAD", "POST", "PUT", "PATCH", "OPTIONS"})
 	log.Fatal(http.ListenAndServe(":8000", handlers.CORS(originsOk, headersOk, exposeOk, methodsOk)(router)))
 }

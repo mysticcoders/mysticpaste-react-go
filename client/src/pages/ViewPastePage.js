@@ -18,11 +18,7 @@ const ViewPastePage = (props) => {
 
             <ViewPasteContainer pasteId={pasteId}/>
 
-            <div id="content" className="ui vertical stripe segment">
-                <div className="ui middle aligned stackable grid container">
-                <FooterContainer />
-                </div>
-            </div>
+            <FooterContainer />
         </div>
     );
 };

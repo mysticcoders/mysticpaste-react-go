@@ -60,4 +60,10 @@ var routes = Routes{
 		"/pastes/{pasteId}",
 		PasteUpdate,
 	},
+	Route{
+		"PasteAdmin",
+		"POST",
+		"/admin",
+		PasteAdmin,
+	},
 }

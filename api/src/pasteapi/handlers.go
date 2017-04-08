@@ -15,6 +15,8 @@ type PasteResult struct {
 	Results    []Paste `json:"results"`
 	Count      int     `json:"count"`
 	TotalCount int     `json:"total_count"`
+	Next       int     `json:"next"`
+	Previous   int     `json:"previous"`
 }
 
 // PasteIndex processes a GET /pastes
@@ -51,12 +53,28 @@ func PasteIndex(w http.ResponseWriter, r *http.Request) {
 		pastes = getPastesByUserToken(UserToken, false, offset)
 	}
 
+	TotalCount := getPasteCount()
+	Count := len(pastes)
+
+	Previous := offset - ItemsPerPage
+	Next := offset + ItemsPerPage
+
+	if(Previous <= 0) {
+		Previous = 0
+	}
+
+	if(Next >= TotalCount) {
+		Next = TotalCount - ItemsPerPage        // this is probably dumb, think this through more, maybe pass nil
+	}
+
 	//log.Printf("%+v", pastes)
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(&PasteResult{
 		Results:    pastes,
-		Count:      len(pastes),
-		TotalCount: getPasteCount(),
+		Count:      Count,
+		TotalCount: TotalCount,
+		Next:       Next,
+		Previous:   Previous,
 	})
 }
 
@@ -158,7 +176,7 @@ func PasteShow(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte("Paste Not Found"))
 	} else {
 		updateViewCount(*paste)
-		w.Header().Set("Content-Type", "application/json")
+		w.Header().Set( "Content-Type", "application/json")
 		json.NewEncoder(w).Encode(paste)
 	}
 }
@@ -206,4 +224,26 @@ func PasteUpdate(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusAccepted)
 	json.NewEncoder(w).Encode(paste)
+}
+
+func PasteAdmin(w http.ResponseWriter, r *http.Request) {
+	r.ParseForm()
+
+	var admin_key string
+	if len(r.Form["admin_key"]) == 1 {
+		admin_key = r.Form["admin_key"][0]
+	}
+
+	var admin bool
+	admin = false
+	if admin_key == AdminKey {
+		admin = true
+	}
+
+	resp := map[string]interface{}{
+		"admin": admin,
+	}
+
+	w.Header().Set( "Content-Type", "application/json")
+	json.NewEncoder(w).Encode(resp)
 }

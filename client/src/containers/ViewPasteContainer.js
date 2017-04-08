@@ -1,77 +1,96 @@
-import React, { PropTypes } from 'react';
-import { connect } from 'react-redux';
+import React, {PropTypes} from 'react';
+import {connect} from 'react-redux';
+import {bindActionCreators} from 'redux';
+
 import * as pasteActions from '../actions/pasteActions';
 
 import PasteEntry from '../components/PasteEntry';
 
+import {Container, Header, Button, Confirm} from 'semantic-ui-react';
+
 class ViewPasteContainer extends React.Component {
-  // constructor(props, context) {
-  //   super(props, context);
-  // }
+    constructor(props, context) {
+      super(props, context);
 
-  componentWillMount() {
-    this.props.loadPaste(this.props.pasteId);
-  }
-
-  handleChange = (event) => {
-    this.setState({
-      [event.target.id]: event.target.value
-    });
-  };
-
-  onViewPaste(pasteId) {
-  }
-
-  render() {
-    if(this.props.paste.error) {
-      return (
-        <div className="container-fluid">
-          <h1>Paste not found</h1>
-        </div>
-      );
+      this.handleMarkAsSpam = this.handleMarkAsSpam.bind(this);
+      this.state = {
+          open: false
+      };
     }
 
-    if(!this.props.paste.paste) {
-      return (
-        <h1>Loading...</h1>
-      );
+    componentWillMount() {
+        this.props.actions.loadPaste(this.props.pasteId);
     }
 
-    let paste = this.props.paste.paste;
+    onViewPaste(pasteId) {
+    }
 
-    // let language = paste.language ? paste.language : "bash";
+    show = () => this.setState({ open: true });
+    handleCancel = () => this.setState({ open: false });
 
-    return (
-      <div className="container-fluid">
-        <PasteEntry paste={paste} lines_to_show={0} onViewPaste={this.onViewPaste.bind(this)}/>
-      </div>
-    );
-  }
+    handleMarkAsSpam() {
+        this.props.actions.markPasteSpam(this.props.pasteId);
+    }
+
+    render() {
+        const {admin} = this.props;
+
+        if (this.props.paste.error) {
+            return (
+                <Container>
+                    <Header size="huge">Paste not found</Header>
+                </Container>
+            );
+        }
+
+        if (!this.props.paste.paste) {
+            return (
+                <Header size="large">Loading...</Header>
+            );
+        }
+
+        let paste = this.props.paste.paste;
+
+        const spamButtonText = paste.abuse ? "Not spam" : "Mark as Spam";
+        const spamButtonColor = paste.abuse ? "orange" : "red";
+        return (
+            <Container>
+                { admin &&
+                    <span>
+                    <Button floated='right' color={spamButtonColor} onClick={this.show}>{spamButtonText}</Button>
+                    <Confirm
+                        open={this.state.open}
+                        content="Are you sure you want to mark this paste as spam?"
+                        onCancel={this.handleCancel}
+                        onConfirm={this.handleMarkAsSpam}
+                    />
+                    </span>
+                }
+                <PasteEntry paste={paste} lines_to_show={0} onViewPaste={this.onViewPaste.bind(this)}/>
+            </Container>
+        );
+    }
 }
 
 ViewPasteContainer.contextTypes = {
-  router: PropTypes.object.isRequired
+    router: PropTypes.object.isRequired
 };
 
 ViewPasteContainer.propTypes = {
-  loadPaste: PropTypes.func.isRequired,
-  pasteId: PropTypes.string.isRequired,
-  paste: PropTypes.object.isRequired
+    actions: PropTypes.object.isRequired,
+    pasteId: PropTypes.string.isRequired,
+    paste: PropTypes.object.isRequired
 };
 
 const mapDispatchToProps = (dispatch) => {
-  return {
-    loadPaste: (pasteId) => {
-      dispatch(pasteActions.loadPaste(pasteId));
-    }
-  };
+    return {actions: bindActionCreators(pasteActions, dispatch)};
 };
 
 function mapStateToProps(state) {
-  return {
-    paste: state.pastes.pastes,
-    isAuthenticated: true
-  };
+    return {
+        paste: state.pastes.pastes,
+        admin: state.auth.admin
+    };
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(ViewPasteContainer);

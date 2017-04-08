@@ -1,9 +1,10 @@
 import React, {PropTypes} from 'react';
 import {connect} from 'react-redux';
+import {bindActionCreators} from 'redux';
 
 import * as pasteActions from '../actions/pasteActions';
 
-import {Container, Header} from 'semantic-ui-react';
+import {Container, Header, Radio, Divider} from 'semantic-ui-react';
 
 import PasteEntry from '../components/PasteEntry';
 
@@ -12,20 +13,34 @@ class HistoryContainer extends React.Component {
         super(props, context);
 
         this.onViewPaste = this.onViewPaste.bind(this);
+        this.handleShowAbuse = this.handleShowAbuse.bind(this);
+        this.state = {
+            showAbuse: false
+        };
     }
 
     componentWillMount() {
-        this.props.loadAllPastes();
+        this.props.actions.loadPastes(this.state.showAbuse, 0);
     }
 
     onViewPaste(pasteId) {
         this.context.router.push('/' + pasteId);
     }
 
+    handleShowAbuse() {
+        let showAbuse = !this.state.showAbuse
+        this.setState({
+            showAbuse
+        });
+        this.props.actions.loadPastes(showAbuse, 0);
+    }
+
     render() {
+        const { admin } = this.props;
+
         if (!this.props.pastes) {
             return (
-                <h1>Loading...</h1>
+                <Header size="large">Loading...</Header>
             );
         }
         let pastes = this.props.pastes;
@@ -41,11 +56,15 @@ class HistoryContainer extends React.Component {
         }
 
         return (
-            <div>
+            <Container fluid>
+                { admin &&
+                    <Radio label="Show Spam Pastes" toggle onClick={this.handleShowAbuse} checked={this.state.showAbuse} />
+                }
                 {pastes.map(paste =>
                     <PasteEntry key={paste.id} paste={paste} lines_to_show={5} onViewPaste={this.onViewPaste}/>
                 )}
-            </div>
+                <Divider hidden />
+            </Container>
         );
     }
 }
@@ -55,16 +74,12 @@ HistoryContainer.contextTypes = {
 };
 
 HistoryContainer.propTypes = {
-    loadAllPastes: PropTypes.func.isRequired,
+    actions: PropTypes.object.isRequired,
     pastes: PropTypes.array.isRequired
 };
 
 const mapDispatchToProps = (dispatch) => {
-    return {
-        loadAllPastes: () => {
-            dispatch(pasteActions.loadAllPastes());
-        }
-    };
+    return {actions: bindActionCreators(pasteActions, dispatch)};
 };
 
 function mapStateToProps(state) {
@@ -75,7 +90,8 @@ function mapStateToProps(state) {
     }
 
     return {
-        pastes: pastes
+        pastes: pastes,
+        admin: state.auth.admin
     };
 }
 
