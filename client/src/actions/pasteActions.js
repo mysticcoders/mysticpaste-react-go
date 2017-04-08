@@ -19,6 +19,10 @@ export function loadPastes(abuse, offset) {
     return {type: types.LOAD_PASTES, abuse, offset};
 }
 
+export function loadMorePastes(abuse, offset) {
+    return {type: types.LOAD_MORE_PASTES, abuse, offset};
+}
+
 export function loadPaste(pasteId) {
     return {type: types.LOAD_PASTE, pasteId};
 }

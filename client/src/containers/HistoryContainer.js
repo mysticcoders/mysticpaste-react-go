@@ -24,6 +24,10 @@ class HistoryContainer extends React.Component {
         this.context.router.push('/' + pasteId);
     }
 
+    loadMorePastes() {
+        this.props.actions.loadMorePastes(this.props.showSpam, this.props.next);
+    }
+
     handleShowAbuse() {
         if(!this.props.showSpam) {
             this.props.actions.showSpamPastes();
@@ -62,8 +66,8 @@ class HistoryContainer extends React.Component {
                     <PasteEntry key={paste.id} paste={paste} lines_to_show={5} onViewPaste={this.onViewPaste}/>
                 )}
                 <Divider hidden />
-                {/*<Button floated="right">Load More</Button>*/}
-                {/*<Divider hidden clearing="true"/>*/}
+                <Button floated="right" onClick={()=>{this.loadMorePastes();}}>Load More</Button>
+                <Divider hidden clearing={true} />
             </Container>
         );
     }
@@ -92,6 +96,7 @@ function mapStateToProps(state) {
     return {
         pastes: pastes,
         admin: state.auth.admin,
+        next: state.pastes.pasteList.next,
         showSpam: state.pastes.showSpam,
     };
 }

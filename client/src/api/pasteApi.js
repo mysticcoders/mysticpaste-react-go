@@ -32,7 +32,7 @@ class PasteApi {
                 }
             })
             .then(response => {
-                return response.data.results;
+                return response.data;
             })
             .catch(error => {
                 throw new Error(error);

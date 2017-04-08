@@ -24,14 +24,14 @@ export default function pasteReducer(state = INITIAL_STATE, action) {
             return {...state, pastes: {paste: null, error: null, deleting: false, deleted: true}};
         case types.DELETE_PASTE_ERROR:
             return {...state, pastes: {paste: null, error: action.message, deleting: false, deleted: false}};
-        case types.LOAD_ALL_PASTES:
-            return {...state, pasteList: {pastes: null, error: null, loading: true}};
-        case types.LOAD_ALL_PASTES_SUCCESS:
-            return {...state, pasteList: {pastes: action.pastes, error: null, loading: false}};
+        case types.LOAD_MORE_PASTES:
+            return {...state, pasteList: {pastes: state.pasteList.pastes}};
+        case types.LOAD_MORE_PASTES_SUCCESS:
+            return {...state, pasteList: {pastes: [...state.pasteList.pastes, ...action.payload.results], next: action.payload.next, previous: action.payload.previous, error: null, loading: false}};
         case types.LOAD_PASTES:
             return {...state, pasteList: {pastes: null, error: null, loading: true}};
         case types.LOAD_PASTES_SUCCESS:
-            return {...state, pasteList: {pastes: action.pastes, error: null, loading: false}};
+            return {...state, pasteList: {pastes: action.payload.results, next: action.payload.next, previous: action.payload.previous, error: null, loading: false}};
         case types.SHOW_SPAM_PASTES:
             return {...state, showSpam: true};
         case types.HIDE_SPAM_PASTES:

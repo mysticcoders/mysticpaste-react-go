@@ -7,6 +7,7 @@ import {
     watchCheckAdmin,
     watchLogoutAdmin,
     watchChangePasteAbuse,
+    watchLoadMorePastes,
 } from './pasteSaga';
 
 export default function* rootSaga() {
@@ -19,5 +20,6 @@ export default function* rootSaga() {
         watchCheckAdmin(),
         watchLogoutAdmin(),
         watchChangePasteAbuse(),
+        watchLoadMorePastes(),
     ];
 }

@@ -16,11 +16,20 @@ export function* loadAllPastes() {
 
 export function* loadPastes({abuse, offset}) {
     try {
-        const pastes = yield call(pasteApi.getPastes, abuse, offset);
-        yield put({type: types.LOAD_PASTES_SUCCESS, pastes});
+        const paste_data = yield call(pasteApi.getPastes, abuse, offset);
+        yield put({type: types.LOAD_PASTES_SUCCESS, payload: paste_data});
         // yield put(appActions.showToast('Created Product:', product.name, 'info'));
     } catch (error) {
         yield put({type: types.LOAD_PASTES_ERROR, message: error});
+    }
+}
+
+export function* loadMorePastes({abuse, offset}) {
+    try {
+        const paste_data = yield call(pasteApi.getPastes, abuse, offset);
+        yield put({type: types.LOAD_MORE_PASTES_SUCCESS, payload: paste_data});
+    } catch (error) {
+        yield put({type: types.LOAD_MORE_PASTES_ERROR, message: error});
     }
 }
 
@@ -53,7 +62,7 @@ export function* deletePaste({pasteId}) {
 
 export function* changePasteAbuse({pasteId, abuse}) {
     try {
-        const result = yield call(pasteApi.changePasteAbuse, pasteId, abuse);
+        yield call(pasteApi.changePasteAbuse, pasteId, abuse);
         yield put({type: types.CHANGE_PASTE_ABUSE_SUCCESS, pasteId});
     } catch (error) {
         yield put({type: types.CHANGE_PASTE_ABUSE_ERROR, message: error});
@@ -100,6 +109,10 @@ export function* watchPasteHistory() {
 
 export function* watchLoadPastes() {
     yield* takeEvery(types.LOAD_PASTES, loadPastes);
+}
+
+export function* watchLoadMorePastes() {
+    yield* takeEvery(types.LOAD_MORE_PASTES, loadMorePastes);
 }
 
 export function* watchLoadPaste() {
