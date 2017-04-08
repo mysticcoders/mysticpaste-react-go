@@ -16,8 +16,8 @@ export function* loadAllPastes() {
 
 export function* loadPastes({abuse, offset}) {
     try {
-        const paste_data = yield call(pasteApi.getPastes, abuse, offset);
-        yield put({type: types.LOAD_PASTES_SUCCESS, payload: paste_data});
+        const pastes = yield call(pasteApi.getPastes, abuse, offset);
+        yield put({type: types.LOAD_PASTES_SUCCESS, payload: pastes});
         // yield put(appActions.showToast('Created Product:', product.name, 'info'));
     } catch (error) {
         yield put({type: types.LOAD_PASTES_ERROR, message: error});
@@ -62,6 +62,7 @@ export function* deletePaste({pasteId}) {
 
 export function* changePasteAbuse({pasteId, abuse}) {
     try {
+        // const result = yield call(pasteApi.changePasteAbuse, pasteId, abuse);
         yield call(pasteApi.changePasteAbuse, pasteId, abuse);
         yield put({type: types.CHANGE_PASTE_ABUSE_SUCCESS, pasteId});
     } catch (error) {

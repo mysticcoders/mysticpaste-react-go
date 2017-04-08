@@ -48,6 +48,8 @@ func main() {
 	}
 	DB.AutoMigrate(&Paste{})
 	DB.AutoMigrate(&Abuse{})
+	//DB.LogMode(true)
+
 	headersOk := handlers.AllowedHeaders([]string{"X-Requested-With", "Content-Type", ApiTokenHeaderKey})
 	exposeOk := handlers.ExposedHeaders([]string{ApiTokenHeaderKey})
 	originsOk := handlers.AllowedOrigins([]string{"*"})

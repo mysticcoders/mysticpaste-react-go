@@ -38,7 +38,7 @@ class HistoryContainer extends React.Component {
     }
 
     render() {
-        const { admin, showSpam } = this.props;
+        const { admin, showSpam, next } = this.props;
 
         if (!this.props.pastes) {
             return (
@@ -60,14 +60,19 @@ class HistoryContainer extends React.Component {
         return (
             <Container fluid>
                 { admin &&
-                    <Radio label="Show Spam Pastes" toggle onClick={this.handleShowAbuse} checked={showSpam} />
+                    <Radio label="Include Spam Pastes" toggle onClick={this.handleShowAbuse} checked={showSpam} />
                 }
+                <Divider hidden />
                 {pastes.map(paste =>
                     <PasteEntry key={paste.id} paste={paste} lines_to_show={5} onViewPaste={this.onViewPaste}/>
                 )}
                 <Divider hidden />
-                <Button floated="right" onClick={()=>{this.loadMorePastes();}}>Load More</Button>
-                <Divider hidden clearing={true} />
+                { next !== -1 &&
+                    <div>
+                        <Button floated="right" onClick={()=>{this.loadMorePastes();}}>Load More</Button>
+                        <Divider hidden clearing={true} />
+                    </div>
+                }
             </Container>
         );
     }

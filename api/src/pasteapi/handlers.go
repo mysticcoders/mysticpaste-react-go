@@ -20,7 +20,6 @@ type PasteResult struct {
 }
 
 // PasteIndex processes a GET /pastes
-// TODO should allow for paging with PasteIndex
 func PasteIndex(w http.ResponseWriter, r *http.Request) {
 	UserToken := r.Header.Get(ApiTokenHeaderKey)
 
@@ -39,6 +38,7 @@ func PasteIndex(w http.ResponseWriter, r *http.Request) {
 	//log.Printf("PasteIndex called with: %s", UserToken)
 
 	var pastes []Paste
+	var TotalCount int
 	if UserToken == AdminKey {
 		var abuse bool
 		abuse_param := r.URL.Query().Get("abuse")
@@ -49,11 +49,12 @@ func PasteIndex(w http.ResponseWriter, r *http.Request) {
 			abuse = false
 		}
 		pastes = getPastes(abuse, offset)
+		TotalCount = getPasteCount()
 	} else {
 		pastes = getPastesByUserToken(UserToken, false, offset)
+		TotalCount = getPasteCountByUserToken(UserToken, false)
 	}
 
-	TotalCount := getPasteCount()
 	Count := len(pastes)
 
 	Previous := offset - ItemsPerPage
@@ -64,7 +65,7 @@ func PasteIndex(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if(Next >= TotalCount) {
-		Next = TotalCount - ItemsPerPage        // this is probably dumb, think this through more, maybe pass nil
+		Next = -1
 	}
 
 	//log.Printf("%+v", pastes)

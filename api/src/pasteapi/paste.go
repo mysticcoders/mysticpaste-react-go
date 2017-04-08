@@ -54,7 +54,7 @@ func getPaste(id string) (*Paste, error) {
 
 func getPasteCountByUserToken(userToken string, abuse bool) int {
 	var count int
-	DB.Where("user_token = ? AND abuse = ?", userToken, abuse).Count(&count)
+	DB.Model(&Paste{}).Where("user_token = ? AND abuse = ?", userToken, abuse).Count(&count)
 
 	return count
 }
@@ -78,7 +78,11 @@ func getPastesByUserToken(userToken string, abuse bool, offset int) []Paste {
 func getPastes(abuse bool, offset int) []Paste {
 	var pastes []Paste
 
-	DB.Limit(ItemsPerPage).Offset(offset).Where("abuse = ?", abuse).Order("created_at desc" ).Find(&pastes)
+	if(abuse) {
+		DB.Limit(ItemsPerPage).Offset(offset).Order("created_at desc" ).Find(&pastes)
+	} else {
+		DB.Limit(ItemsPerPage).Offset(offset).Where("abuse = ?", abuse).Order("created_at desc" ).Find(&pastes)
+	}
 
 	return pastes
 }

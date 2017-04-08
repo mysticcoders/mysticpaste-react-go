@@ -3,7 +3,7 @@ import moment from 'moment';
 import './PasteEntry.css';
 
 import Highlight from 'react-highlight';
-import { Container } from 'semantic-ui-react';
+import { Container, Label } from 'semantic-ui-react';
 
 const PasteEntry = ({paste, lines_to_show, onViewPaste}) => {
 
@@ -23,12 +23,21 @@ const PasteEntry = ({paste, lines_to_show, onViewPaste}) => {
     }
     let natural_created = moment(paste.created_at).fromNow();
 
+    const metaColor = paste.abuse ? "red" : "grey";
+
     return (
         <Container>
             <div key={paste.id} className="pasteEntry" onClick={() => {
                 onViewPaste(paste.id);
             }}>
-                <p className="lead" style={{marginTop: '10px', marginBottom: '0px'}}>{natural_created}</p>
+                <Label color={metaColor}>
+                    {natural_created}
+                    { paste.abuse &&
+                        <Label.Detail>
+                            Spam
+                        </Label.Detail>
+                    }
+                </Label>
                 <Highlight className={language}>
                     {code}
                 </Highlight>
