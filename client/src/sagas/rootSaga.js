@@ -6,7 +6,7 @@ import {
     watchDeletePaste,
     watchCheckAdmin,
     watchLogoutAdmin,
-    watchMarkPasteSpam,
+    watchChangePasteAbuse,
 } from './pasteSaga';
 
 export default function* rootSaga() {
@@ -18,6 +18,6 @@ export default function* rootSaga() {
         watchDeletePaste(),
         watchCheckAdmin(),
         watchLogoutAdmin(),
-        watchMarkPasteSpam(),
+        watchChangePasteAbuse(),
     ];
 }

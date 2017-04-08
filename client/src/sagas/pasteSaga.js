@@ -51,13 +51,12 @@ export function* deletePaste({pasteId}) {
     }
 }
 
-export function* markPasteSpam({pasteId}) {
+export function* changePasteAbuse({pasteId, abuse}) {
     try {
-        const result = yield call(pasteApi.markPasteSpam, pasteId);
-        console.log(result);
-        yield put({type: types.MARK_PASTE_SPAM_SUCCESS, pasteId});
+        const result = yield call(pasteApi.changePasteAbuse, pasteId, abuse);
+        yield put({type: types.CHANGE_PASTE_ABUSE_SUCCESS, pasteId});
     } catch (error) {
-        yield put({type: types.MARK_PASTE_SPAM_ERROR, message: error});
+        yield put({type: types.CHANGE_PASTE_ABUSE_ERROR, message: error});
     }
 }
 
@@ -91,8 +90,8 @@ export function* watchLogoutAdmin() {
     yield* takeEvery(types.LOGOUT_ADMIN, logoutAdmin);
 }
 
-export function* watchMarkPasteSpam() {
-    yield* takeEvery(types.MARK_PASTE_SPAM, markPasteSpam);
+export function* watchChangePasteAbuse() {
+    yield* takeEvery(types.CHANGE_PASTE_ABUSE, changePasteAbuse);
 }
 
 export function* watchPasteHistory() {

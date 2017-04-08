@@ -3,6 +3,7 @@ import * as types from '../constants/actionTypes';
 const INITIAL_STATE = {
     pastes: {paste: null, error: null, loading: false},
     pasteList: {pastes: null, error: null, loading: false},
+    showSpam: false
 };
 
 export default function pasteReducer(state = INITIAL_STATE, action) {
@@ -31,6 +32,10 @@ export default function pasteReducer(state = INITIAL_STATE, action) {
             return {...state, pasteList: {pastes: null, error: null, loading: true}};
         case types.LOAD_PASTES_SUCCESS:
             return {...state, pasteList: {pastes: action.pastes, error: null, loading: false}};
+        case types.SHOW_SPAM_PASTES:
+            return {...state, showSpam: true};
+        case types.HIDE_SPAM_PASTES:
+            return {...state, showSpam: false};
         default:
             return state;
     }

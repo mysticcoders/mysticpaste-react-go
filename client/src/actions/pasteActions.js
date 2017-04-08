@@ -35,6 +35,14 @@ export function logoutAdmin() {
     return {type: types.LOGOUT_ADMIN};
 }
 
-export function markPasteSpam(pasteId) {
-    return {type: types.MARK_PASTE_SPAM, pasteId};
+export function changePasteAbuse(pasteId, abuse) {
+    return {type: types.CHANGE_PASTE_ABUSE, pasteId, abuse};
+}
+
+export function showSpamPastes() {
+    return {type: types.SHOW_SPAM_PASTES};
+}
+
+export function hideSpamPastes() {
+    return {type: types.HIDE_SPAM_PASTES};
 }

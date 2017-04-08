@@ -12,7 +12,7 @@ class ViewPasteContainer extends React.Component {
     constructor(props, context) {
       super(props, context);
 
-      this.handleMarkAsSpam = this.handleMarkAsSpam.bind(this);
+      this.handleChangePasteAbuse = this.handleChangePasteAbuse.bind(this);
       this.state = {
           open: false
       };
@@ -28,8 +28,8 @@ class ViewPasteContainer extends React.Component {
     show = () => this.setState({ open: true });
     handleCancel = () => this.setState({ open: false });
 
-    handleMarkAsSpam() {
-        this.props.actions.markPasteSpam(this.props.pasteId);
+    handleChangePasteAbuse() {
+        this.props.actions.changePasteAbuse(this.props.pasteId, !this.props.paste.abuse);
     }
 
     render() {
@@ -62,7 +62,7 @@ class ViewPasteContainer extends React.Component {
                         open={this.state.open}
                         content="Are you sure you want to mark this paste as spam?"
                         onCancel={this.handleCancel}
-                        onConfirm={this.handleMarkAsSpam}
+                        onConfirm={this.handleChangePasteAbuse}
                     />
                     </span>
                 }

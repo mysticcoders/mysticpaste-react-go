@@ -53,12 +53,12 @@ class PasteApi {
             });
     }
 
-    static markPasteSpam(pasteId) {
+    static changePasteAbuse(pasteId, abuse) {
         if (localStorage.getItem("admin") !== "true") {
             throw new Error("Not an administrator, fail");
         }
         return axios.patch(`${apiUrl()}/pastes/${pasteId}`, {
-                abuse: true
+                abuse
             },
             {
                 headers: {

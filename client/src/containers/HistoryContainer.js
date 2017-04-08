@@ -4,7 +4,7 @@ import {bindActionCreators} from 'redux';
 
 import * as pasteActions from '../actions/pasteActions';
 
-import {Container, Header, Radio, Divider} from 'semantic-ui-react';
+import {Container, Header, Radio, Divider, Button} from 'semantic-ui-react';
 
 import PasteEntry from '../components/PasteEntry';
 
@@ -14,13 +14,10 @@ class HistoryContainer extends React.Component {
 
         this.onViewPaste = this.onViewPaste.bind(this);
         this.handleShowAbuse = this.handleShowAbuse.bind(this);
-        this.state = {
-            showAbuse: false
-        };
     }
 
     componentWillMount() {
-        this.props.actions.loadPastes(this.state.showAbuse, 0);
+        this.props.actions.loadPastes(this.props.showSpam, 0);
     }
 
     onViewPaste(pasteId) {
@@ -28,15 +25,16 @@ class HistoryContainer extends React.Component {
     }
 
     handleShowAbuse() {
-        let showAbuse = !this.state.showAbuse
-        this.setState({
-            showAbuse
-        });
-        this.props.actions.loadPastes(showAbuse, 0);
+        if(!this.props.showSpam) {
+            this.props.actions.showSpamPastes();
+        } else {
+            this.props.actions.hideSpamPastes();
+        }
+        this.props.actions.loadPastes(!this.props.showSpam, 0);
     }
 
     render() {
-        const { admin } = this.props;
+        const { admin, showSpam } = this.props;
 
         if (!this.props.pastes) {
             return (
@@ -58,12 +56,14 @@ class HistoryContainer extends React.Component {
         return (
             <Container fluid>
                 { admin &&
-                    <Radio label="Show Spam Pastes" toggle onClick={this.handleShowAbuse} checked={this.state.showAbuse} />
+                    <Radio label="Show Spam Pastes" toggle onClick={this.handleShowAbuse} checked={showSpam} />
                 }
                 {pastes.map(paste =>
                     <PasteEntry key={paste.id} paste={paste} lines_to_show={5} onViewPaste={this.onViewPaste}/>
                 )}
                 <Divider hidden />
+                {/*<Button floated="right">Load More</Button>*/}
+                {/*<Divider hidden clearing="true"/>*/}
             </Container>
         );
     }
@@ -91,7 +91,8 @@ function mapStateToProps(state) {
 
     return {
         pastes: pastes,
-        admin: state.auth.admin
+        admin: state.auth.admin,
+        showSpam: state.pastes.showSpam,
     };
 }
 
