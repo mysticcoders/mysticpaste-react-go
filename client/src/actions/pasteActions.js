@@ -43,6 +43,10 @@ export function changePasteAbuse(pasteId, abuse) {
     return {type: types.CHANGE_PASTE_ABUSE, pasteId, abuse};
 }
 
+export function clearChangePasteAbuse() {
+    return {type: types.CHANGE_PASTE_ABUSE_CLEAR};
+}
+
 export function showSpamPastes() {
     return {type: types.SHOW_SPAM_PASTES};
 }

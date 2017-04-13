@@ -1,4 +1,4 @@
-import {takeEvery} from 'redux-saga';
+import {takeEvery, delay} from 'redux-saga';
 import {put, call} from 'redux-saga/effects';
 import * as types from '../constants/actionTypes';
 // import pasteApi from '../api/mockPasteApi';
@@ -102,6 +102,15 @@ export function* watchLogoutAdmin() {
 
 export function* watchChangePasteAbuse() {
     yield* takeEvery(types.CHANGE_PASTE_ABUSE, changePasteAbuse);
+}
+
+export function* pasteAbuseFlagTimer() {
+    yield call(delay, 5000);
+    yield put({type: types.CHANGE_PASTE_ABUSE_CLEAR});
+}
+
+export function* watchChangePasteAbuseFlag() {
+    yield* takeEvery(types.CHANGE_PASTE_ABUSE_SUCCESS, pasteAbuseFlagTimer);
 }
 
 export function* watchPasteHistory() {

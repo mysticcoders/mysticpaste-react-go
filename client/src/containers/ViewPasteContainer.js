@@ -6,7 +6,7 @@ import * as pasteActions from '../actions/pasteActions';
 
 import PasteEntry from '../components/PasteEntry';
 
-import {Container, Header, Button, Confirm} from 'semantic-ui-react';
+import {Container, Header, Button, Confirm, Message} from 'semantic-ui-react';
 
 class ViewPasteContainer extends React.Component {
     constructor(props, context) {
@@ -30,10 +30,13 @@ class ViewPasteContainer extends React.Component {
 
     handleChangePasteAbuse() {
         this.props.actions.changePasteAbuse(this.props.pasteId, !this.props.paste.abuse);
+        this.setState({
+            open: false,
+        });
     }
 
     render() {
-        const {admin} = this.props;
+        const {admin, pasteAbuseChanged} = this.props;
 
         if (this.props.paste.error) {
             return (
@@ -57,6 +60,12 @@ class ViewPasteContainer extends React.Component {
             <Container>
                 { admin &&
                     <span>
+                        { pasteAbuseChanged &&
+                          <Message success>
+                            <Message.Header>Status of paste successfully changed</Message.Header>
+                            <p>You've successfully modified the paste.</p>
+                          </Message>
+                        }
                     <Button floated='right' color={spamButtonColor} onClick={this.show}>{spamButtonText}</Button>
                     <Confirm
                         open={this.state.open}
@@ -89,7 +98,8 @@ const mapDispatchToProps = (dispatch) => {
 function mapStateToProps(state) {
     return {
         paste: state.pastes.pastes,
-        admin: state.auth.admin
+        admin: state.auth.admin,
+        pasteAbuseChanged: state.pastes.pasteAbuseChanged
     };
 }
 

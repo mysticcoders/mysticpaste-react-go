@@ -36,6 +36,12 @@ export default function pasteReducer(state = INITIAL_STATE, action) {
             return {...state, showSpam: true};
         case types.HIDE_SPAM_PASTES:
             return {...state, showSpam: false};
+        case types.CHANGE_PASTE_ABUSE:
+            return {...state, pasteAbuseChanged: false};
+        case types.CHANGE_PASTE_ABUSE_SUCCESS:
+            return {...state, pasteAbuseChanged: true};
+        case types.CHANGE_PASTE_ABUSE_CLEAR:
+            return {...state, pasteAbuseChanged: null};
         default:
             return state;
     }
