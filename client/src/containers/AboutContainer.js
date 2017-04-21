@@ -13,6 +13,10 @@ class AboutContainer extends React.Component {
         this.deletePaste = this.deletePaste.bind(this);
     }
 
+    shouldComponentUpdate(nextProps, nextState) {
+        return false;
+    }
+
     componentDidMount() {
         this.setState({
             deletePasteId: null

@@ -14,8 +14,18 @@ class NewPasteContainer extends React.Component {
         this.createPaste = this.createPaste.bind(this);
         this.state = {
             code: '',
-            language: 'python'
+            language: 'python',
+            hasCode: false,
         };
+    }
+
+    shouldComponentUpdate(nextProps, nextState) {
+        // if(this.state.code !== nextState.code) return true;
+
+        if(this.state.hasCode !== nextState.hasCode) return true;
+        if(this.props.saved !== nextProps.saved) return true;
+
+        return false;
     }
 
     componentWillUpdate(nextProps, nextState) {
@@ -30,8 +40,11 @@ class NewPasteContainer extends React.Component {
 
     handleChange = (event, data) => {
 
+        const hasCode = data.id === 'code' && data.value !== '';
+
         this.setState({
-            [data.id]: data.value
+            [data.id]: data.value,
+            hasCode,
         });
     };
 
@@ -44,7 +57,9 @@ class NewPasteContainer extends React.Component {
                     handleChange={this.handleChange}
                     createPaste={this.createPaste}
                     language={this.state.language}
-                    code={this.state.code}/>
+                    code={this.state.code}
+                    hasCode={this.state.hasCode}
+                />
 
             </div>
         );

@@ -16,6 +16,19 @@ class HistoryContainer extends React.Component {
         this.handleShowAbuse = this.handleShowAbuse.bind(this);
     }
 
+    shouldComponentUpdate(nextProps, nextState) {
+        if(this.props.admin !== nextProps.admin) return true;
+        if(this.props.next !== nextProps.next) return true;
+        if(this.props.showSpam !== nextProps.showSpam) return true;
+
+        console.log("shouldComponentUpdate.this.props:", this.props);
+        console.log("shouldComponentUpdate.nextProps:", nextProps);
+
+        if(this.props.pastes.length !== nextProps.pastes.length) return true;
+
+        return false;
+    }
+
     componentWillMount() {
         this.props.actions.loadPastes(this.props.showSpam, 0);
     }
