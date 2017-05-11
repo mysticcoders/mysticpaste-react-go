@@ -64,7 +64,7 @@ func main() {
 	reg, err := regexp.Compile("[^a-zA-Z0-9]+")
 	for _, goodPaste := range goodPastes {
 		processedString := reg.ReplaceAllString(goodPaste.Content, " ")
-		log.Print(processedString)
+		//log.Print(processedString)
 		classifier.Add(processedString, []string{"Good"})
 	}
 
