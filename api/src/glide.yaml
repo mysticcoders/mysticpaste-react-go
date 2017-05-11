@@ -12,3 +12,5 @@ import:
 - package: github.com/spf13/viper
 - package: github.com/asdine/storm
   version: ^0.7.0
+- package: github.com/jbrukh/bayesian
+  version: ^1.0.0
