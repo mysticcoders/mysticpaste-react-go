@@ -1,0 +1,34 @@
+machine:
+  python:
+    version: 2.7.13
+  node:
+    version: 7.8.0
+  environment:
+    PATH: "${PATH}:${HOME}/${CIRCLE_PROJECT_REPONAME}/node_modules/.bin"
+
+dependencies:
+  override:
+    - yarn:
+        pwd:
+          client
+    - sudo add-apt-repository ppa:mwasterminds/glide -y
+    - sudo apt-get update
+    - sudo apt-get install glide -y
+
+test:
+  override:
+    - yarn test:
+        pwd:
+          client
+# test:
+#   override:
+#     - py.test test_*.py
+
+deployment:
+  production:
+    branch: master
+    commands:
+      - cd client && ./build.sh
+      - cd client && ./deploy_prod.sh
+      # - cd server && ./build.sh
+      # - cd server && ./deploy_prod.sh
