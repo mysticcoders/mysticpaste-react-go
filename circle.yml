@@ -11,7 +11,7 @@ dependencies:
     - yarn:
         pwd:
           client
-    - sudo add-apt-repository ppa:mwasterminds/glide -y
+    - sudo add-apt-repository ppa:masterminds/glide -y
     - sudo apt-get update
     - sudo apt-get install glide -y
 
