@@ -1,6 +1,6 @@
 #!/bin/bash
 
-scp $CIRCLE_ARTIFACTS/client.tgz deploy@173.255.217.67:~
+scp $CIRCLE_ARTIFACTS/client.tgz deploy@50.116.29.145:~
 # ssh deploy@173.255.217.67 bash -c "'
 #   cd /var/www/vhosts/scholarbee.net/httpdocs/spelling &&
 #   tar czvf spelling.tgz * &&
