@@ -4,6 +4,7 @@ machine:
   node:
     version: 7.8.0
   environment:
+    GOPATH: "${HOME}/${CIRCLE_PROJECT_REPONAME}/api/src"
     PATH: "${PATH}:${HOME}/${CIRCLE_PROJECT_REPONAME}/node_modules/.bin"
 
 dependencies:
@@ -11,6 +12,7 @@ dependencies:
     - yarn:
         pwd:
           client
+    - echo $GOPATH
     - sudo add-apt-repository ppa:masterminds/glide -y
     - sudo apt-get update
     - sudo apt-get install glide -y
