@@ -18,7 +18,7 @@ dependencies:
     - sudo apt-get install glide -y
     - glide install:
         pwd:
-          api/src
+          api
 
 test:
   override:
