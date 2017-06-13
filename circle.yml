@@ -4,7 +4,7 @@ machine:
   node:
     version: 7.8.0
   environment:
-    GOPATH: "${HOME}/${CIRCLE_PROJECT_REPONAME}/api/src"
+    GOPATH: "${HOME}/${CIRCLE_PROJECT_REPONAME}/api"
     PATH: "${PATH}:${HOME}/${CIRCLE_PROJECT_REPONAME}/node_modules/.bin"
 
 dependencies:
