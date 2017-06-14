@@ -1,8 +1,8 @@
 #!/bin/bash
-
-echo "Installing any dependencies for the project"
-
-yarn
+#
+# echo "Installing any dependencies for the project"
+#
+# yarn
 
 echo "Building the Mystic Paste React app"
 
