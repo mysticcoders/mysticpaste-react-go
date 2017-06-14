@@ -1,12 +1,12 @@
 #!/bin/bash
 
-# TODO figure out why it is timing out
+# TODO extract these host IP's into environment variables
 scp $CIRCLE_ARTIFACTS/client.tgz deploy@50.116.29.145:~
-# ssh deploy@173.255.217.67 bash -c "'
-#   cd /var/www/vhosts/scholarbee.net/httpdocs/spelling &&
-#   tar czvf spelling.tgz * &&
-#   mv spelling.tgz ../../archive &&
-#   rm -rf * &&
-#   mv ~/client.tgz /var/www/vhosts/scholarbee.net/httpdocs/spelling &&
-#   tar xzvf client.tgz
-# '"
+ssh deploy@50.116.29.145 bash -c "'
+  cd /var/www/vhosts/mysticpaste.com/httpdocs &&
+  tar czvf spelling.tgz * &&
+  mv spelling.tgz ../../archive &&
+  rm -rf * &&
+  mv ~/client.tgz /var/www/vhosts/mysticpaste.com/httpdocs &&
+  tar xzvf client.tgz
+'"
