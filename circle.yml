@@ -19,19 +19,24 @@ dependencies:
     - glide install:
         pwd:
           api/src
+  cache_directories:
+    - "api/src/vendor"
+    - "client/node_modules"
 
 test:
   override:
     - yarn test:
         pwd:
           client
-# test:
-#   override:
-#     - py.test test_*.py
 
 deployment:
-  production:
+  master:
     branch: master
+    commands:
+      - cd client && ./build.sh
+      - cd api/src && ./build.sh
+  production:
+    branch: production
     commands:
       - cd client && ./build.sh
       - cd client && ./deploy_prod.sh
