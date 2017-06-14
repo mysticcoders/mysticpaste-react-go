@@ -35,5 +35,5 @@ deployment:
     commands:
       - cd client && ./build.sh
       - cd client && ./deploy_prod.sh
-      - cd api && ./build.sh
+      - cd api/src && ./build.sh
       # - cd server && ./deploy_prod.sh
