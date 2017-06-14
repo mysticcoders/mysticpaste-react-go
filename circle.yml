@@ -36,4 +36,4 @@ deployment:
       - cd client && ./build.sh
       - cd client && ./deploy_prod.sh
       - cd api/src && ./build.sh
-      - cd server && ./deploy_prod.sh
+      - cd api/src && ./deploy_prod.sh
