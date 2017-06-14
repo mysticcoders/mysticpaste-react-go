@@ -11,5 +11,5 @@ cd pasteapi
 go build
 
 chmod a+x pasteapi
-
-mv pasteapi $CIRCLE_ARTIFACTS
+tar czvf pasteapi.tgz pasteapi
+mv pasteapi.tgz $CIRCLE_ARTIFACTS
