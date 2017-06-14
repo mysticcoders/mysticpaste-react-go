@@ -9,4 +9,5 @@ ssh deploy@50.116.29.145 bash -c "'
   rm -rf * &&
   mv ~/client.tgz /var/www/vhosts/mysticpaste.com/httpdocs &&
   tar xzvf client.tgz
+  rm -rf client.tgz
 '"
