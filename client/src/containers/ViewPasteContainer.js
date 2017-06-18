@@ -33,6 +33,7 @@ class ViewPasteContainer extends React.Component {
         this.setState({
             open: false,
         });
+        this.context.router.push('/history');           // when done, lets just go back to history because ... that's enough
     }
 
     render() {

@@ -7,7 +7,7 @@ admin.sh
 *.pyc
 
 # IDEA crap
-.idea
+.idea/**
 
 api/src/glide.lock
 src/pasteapi/config-test.yaml
