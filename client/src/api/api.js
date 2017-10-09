@@ -1,9 +1,8 @@
 export function apiUrl() {
-  if(process.env.NODE_ENV !== 'production') {
-    // return 'http://10.0.1.17:8000';
-    return 'http://localhost:8000';
+  if(process.env.REACT_APP_ENV === 'production') {
+      return 'http://api.mysticpaste.com';
   }
-  return 'http://api.mysticpaste.com';
+  return 'http://localhost:8000';
 }
 
 // export function loginToken() {

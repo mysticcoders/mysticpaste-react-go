@@ -18,12 +18,13 @@ import 'highlight.js/styles/agate.css';
 // import ReactGA from 'react-ga';
 
 // We only want to have GA run in production
-if(process.env.NODE_ENV === 'production') {
+if(process.env.REACT_APP_ENV === 'production') {
   // ReactGA.initialize('UA-254925-14');
-} else {
-    const {whyDidYouUpdate} = require('why-did-you-update')
-    whyDidYouUpdate(React)
 }
+// else {
+//     const {whyDidYouUpdate} = require('why-did-you-update')
+//     whyDidYouUpdate(React)
+// }
 
 const store = configureStore({}, browserHistory);
 

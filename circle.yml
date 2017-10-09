@@ -38,7 +38,7 @@ deployment:
   production:
     branch: production
     commands:
-      - cd client && ./build.sh
-      - cd client && ./deploy_prod.sh
+      - cd client && REACT_APP_ENV=production ./build.sh
+      - cd client && HOST_IP=50.116.29.145 ./deploy.sh
       - cd api/src && ./build.sh
-      - cd api/src && ./deploy_prod.sh
+      - cd api/src && HOST_IP=50.116.29.145 ./deploy.sh
