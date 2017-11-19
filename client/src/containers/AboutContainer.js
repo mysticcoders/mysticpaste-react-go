@@ -4,7 +4,7 @@ import {bindActionCreators} from 'redux';
 
 import {Message, Header} from 'semantic-ui-react'
 
-import * as pasteActions from '../actions/pasteActions';
+import {actions as pasteActions} from '../ducks/pastes';
 
 class AboutContainer extends React.Component {
     constructor(props, context) {
@@ -13,7 +13,7 @@ class AboutContainer extends React.Component {
         this.deletePaste = this.deletePaste.bind(this);
     }
 
-    shouldComponentUpdate(nextProps, nextState) {
+    shouldComponentUpdate() {
         return false;
     }
 

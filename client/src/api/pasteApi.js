@@ -5,21 +5,6 @@ import querystring from 'querystring';
 
 class PasteApi {
 
-    // static getAllPastes() {
-    //     return axios.get(`${apiUrl()}/pastes`,
-    //         {
-    //             headers: {
-    //                 "X-Pastebin-User-Token": localStorage.getItem("userToken")
-    //             }
-    //         })
-    //         .then(response => {
-    //             return response.data.results;
-    //         })
-    //         .catch(error => {
-    //             throw new Error(error);
-    //         });
-    // }
-
     static getPastes(abuse, offset) {
         return axios.get(`${apiUrl()}/pastes`,
             {
@@ -57,6 +42,7 @@ class PasteApi {
         if (localStorage.getItem("admin") !== "true") {
             throw new Error("Not an administrator, fail");
         }
+        console.log(abuse);
         return axios.patch(`${apiUrl()}/pastes/${pasteId}`, {
                 abuse
             },
@@ -92,7 +78,6 @@ class PasteApi {
                 let userToken = localStorage.getItem("userToken");
 
                 if (!userToken || userToken === 'undefined') {
-                    // localStorage.setItem("userToken", response.headers['X-Pastebin-User-Token']);
                     localStorage.setItem("userToken", response.headers['x-pastebin-user-token']);
                 }
 
@@ -116,9 +101,6 @@ class PasteApi {
     }
 
     static checkAdmin(adminKey) {
-        // let data = new FormData();
-        // data.append("admin_key", adminKey);
-
         let data = querystring.stringify({
             "admin_key": adminKey,
         });
@@ -135,18 +117,3 @@ class PasteApi {
 }
 
 export default PasteApi;
-
-/*
- {
- "ID": 8,
- "CreatedAt": "2017-03-14T23:44:04.823182Z",
- "UpdatedAt": "2017-03-15T01:21:14.243443Z",
- "DeletedAt": null,
- "key": "oneXcRkcDX",
- "content": "What The Fart!",
- "private": false,
- "language": "Java",
- "client_ip": "[::1]:60989",
- "view_count": 2444
- }
- */

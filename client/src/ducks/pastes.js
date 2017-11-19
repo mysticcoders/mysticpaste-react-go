@@ -1,12 +1,37 @@
-import * as types from '../constants/actionTypes';
+import moment from 'moment';
 
-const INITIAL_STATE = {
-    pastes: {paste: null, error: null, loading: false},
-    pasteList: {pastes: null, error: null, loading: false},
-    showSpam: false
+// ACTION TYPES
+export const types = {
+    SAVE_PASTE: 'SAVE_PASTE',
+    SAVE_PASTE_SUCCESS: 'SAVE_PASTE_SUCCESS',
+    SAVE_PASTE_ERROR: 'SAVE_PASTE_ERROR',
+    LOAD_PASTE: 'LOAD_PASTE',
+    LOAD_PASTE_SUCCESS: 'LOAD_PASTE_SUCCESS',
+    DELETE_PASTE: 'DELETE_PASTE',
+    DELETE_PASTE_SUCCESS: 'DELETE_PASTE_SUCCESS',
+    DELETE_PASTE_ERROR: 'DELETE_PASTE_ERROR',
+    LOAD_PASTE_ERROR: 'LOAD_PASTE_ERROR',
+    LOAD_ALL_PASTES: 'LOAD_ALL_PASTES',
+    LOAD_ALL_PASTES_SUCCESS: 'LOAD_ALL_PASTES_SUCCESS',
+    LOAD_ALL_PASTES_ERROR: 'LOAD_ALL_PASTES_ERROR',
+    LOAD_MORE_PASTES: 'LOAD_MORE_PASTES',
+    LOAD_MORE_PASTES_SUCCESS: 'LOAD_MORE_PASTES_SUCCESS',
+    LOAD_MORE_PASTES_ERROR: 'LOAD_MORE_PASTES_ERROR',
+    LOAD_PASTES: 'LOAD_PASTES',
+    LOAD_PASTES_SUCCESS: 'LOAD_PASTES_SUCCESS',
+    LOAD_PASTES_ERROR: 'LOAD_PASTES_ERROR',
 };
 
-export default function pasteReducer(state = INITIAL_STATE, action) {
+// REDUCERS
+
+const initialState = {
+    pastes: {paste: null, error: null, loading: false},
+    pasteList: {pastes: null, error: null, loading: false},
+    showSpam: false,
+    admin: localStorage.getItem("admin") === 'true'
+};
+
+export default function pasteReducer(state = initialState, action) {
     switch (action.type) {
         case types.SAVE_PASTE:
             return {...state, pastes: {paste: null, error: null, saving: true, saved: false}};
@@ -42,7 +67,23 @@ export default function pasteReducer(state = INITIAL_STATE, action) {
             return {...state, pasteAbuseChanged: true};
         case types.CHANGE_PASTE_ABUSE_CLEAR:
             return {...state, pasteAbuseChanged: null};
+        case types.CHECK_ADMIN:
+        case types.CHECK_ADMIN_FAILURE:
+        case types.CHECK_ADMIN_ERROR:
+        case types.LOGOUT_ADMIN:
+            return {...state, admin: false};
+        case types.CHECK_ADMIN_SUCCESS:
+            return {...state, admin: true};
         default:
             return state;
     }
 }
+
+// ACTION CREATORS
+export const actions = {
+    savePaste: (code, language) => ({ type: types.SAVE_PASTE, paste: {code: code, language: language, created_at: moment().format()} }),
+    loadPastes: (abuse, offset) => ({ type: types.LOAD_PASTES, abuse, offset }),
+    loadMorePastes: (abuse, offset) => ({ type: types.LOAD_MORE_PASTES, abuse, offset }),
+    loadPaste: (pasteId) => ({ type: types.LOAD_PASTE, pasteId }),
+    deletePaste: (pasteId) => ({ type: types.DELETE_PASTE, pasteId }),
+};
