@@ -5,17 +5,3 @@ export function apiUrl() {
   }
   return 'http://api.mysticpaste.com';
 }
-
-// export function loginToken() {
-//   return localStorage.getItem('loginToken');
-// }
-//
-// export function defaultHeaders() {
-//   let headers = {
-//     'Content-Type': 'application/json'
-//   };
-//   if(loginToken()) {
-//     headers['Authorization'] = `Token ${loginToken()}`;
-//   }
-//   return headers;
-// }

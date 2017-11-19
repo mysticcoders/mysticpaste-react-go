@@ -1,6 +1,7 @@
 import {takeEvery, delay} from 'redux-saga';
 import {put, call} from 'redux-saga/effects';
-import * as types from '../constants/actionTypes';
+import {types} from '../ducks/pastes';
+import {types as authTypes} from '../ducks/auths';
 // import pasteApi from '../api/mockPasteApi';
 import pasteApi from '../api/pasteApi';
 
@@ -8,7 +9,6 @@ export function* loadAllPastes() {
     try {
         const pastes = yield call(pasteApi.getAllPastes);
         yield put({type: types.LOAD_ALL_PASTES_SUCCESS, pastes});
-        // yield put(appActions.showToast('Created Product:', product.name, 'info'));
     } catch (error) {
         yield put({type: types.LOAD_ALL_PASTES_ERROR, message: error});
     }
@@ -18,7 +18,6 @@ export function* loadPastes({abuse, offset}) {
     try {
         const pastes = yield call(pasteApi.getPastes, abuse, offset);
         yield put({type: types.LOAD_PASTES_SUCCESS, payload: pastes});
-        // yield put(appActions.showToast('Created Product:', product.name, 'info'));
     } catch (error) {
         yield put({type: types.LOAD_PASTES_ERROR, message: error});
     }
@@ -62,11 +61,10 @@ export function* deletePaste({pasteId}) {
 
 export function* changePasteAbuse({pasteId, abuse}) {
     try {
-        // const result = yield call(pasteApi.changePasteAbuse, pasteId, abuse);
         yield call(pasteApi.changePasteAbuse, pasteId, abuse);
-        yield put({type: types.CHANGE_PASTE_ABUSE_SUCCESS, pasteId});
+        yield put({type: authTypes.CHANGE_PASTE_ABUSE_SUCCESS, pasteId});
     } catch (error) {
-        yield put({type: types.CHANGE_PASTE_ABUSE_ERROR, message: error});
+        yield put({type: authTypes.CHANGE_PASTE_ABUSE_ERROR, message: error});
     }
 }
 
@@ -76,14 +74,14 @@ export function* checkAdmin({adminKey}) {
         if(admin_response.data.admin === true) {
             localStorage.setItem("userToken", adminKey);
             localStorage.setItem("admin", true);
-            yield put({type: types.CHECK_ADMIN_SUCCESS, payload: {
+            yield put({type: authTypes.CHECK_ADMIN_SUCCESS, payload: {
                 admin: true
             }});
         } else {
-            yield put({type: types.CHECK_ADMIN_FAILURE});
+            yield put({type: authTypes.CHECK_ADMIN_FAILURE});
         }
     } catch (error) {
-        yield put({type: types.CHECK_ADMIN_ERROR, message: error});
+        yield put({type: authTypes.CHECK_ADMIN_ERROR, message: error});
     }
 }
 
@@ -93,24 +91,24 @@ export function logoutAdmin() {
 }
 
 export function* watchCheckAdmin() {
-    yield* takeEvery(types.CHECK_ADMIN, checkAdmin);
+    yield* takeEvery(authTypes.CHECK_ADMIN, checkAdmin);
 }
 
 export function* watchLogoutAdmin() {
-    yield* takeEvery(types.LOGOUT_ADMIN, logoutAdmin);
+    yield* takeEvery(authTypes.LOGOUT_ADMIN, logoutAdmin);
 }
 
 export function* watchChangePasteAbuse() {
-    yield* takeEvery(types.CHANGE_PASTE_ABUSE, changePasteAbuse);
+    yield* takeEvery(authTypes.CHANGE_PASTE_ABUSE, changePasteAbuse);
 }
 
 export function* pasteAbuseFlagTimer() {
     yield call(delay, 5000);
-    yield put({type: types.CHANGE_PASTE_ABUSE_CLEAR});
+    yield put({type: authTypes.CHANGE_PASTE_ABUSE_CLEAR});
 }
 
 export function* watchChangePasteAbuseFlag() {
-    yield* takeEvery(types.CHANGE_PASTE_ABUSE_SUCCESS, pasteAbuseFlagTimer);
+    yield* takeEvery(authTypes.CHANGE_PASTE_ABUSE_SUCCESS, pasteAbuseFlagTimer);
 }
 
 export function* watchPasteHistory() {
@@ -136,3 +134,17 @@ export function* watchSavePaste() {
 export function* watchDeletePaste() {
     yield* takeEvery(types.DELETE_PASTE, deletePaste);
 }
+
+
+export const sagas = [
+    watchPasteHistory(),
+    watchLoadPastes(),
+    watchLoadPaste(),
+    watchSavePaste(),
+    watchDeletePaste(),
+    watchCheckAdmin(),
+    watchLogoutAdmin(),
+    watchChangePasteAbuse(),
+    watchLoadMorePastes(),
+    watchChangePasteAbuseFlag(),
+];

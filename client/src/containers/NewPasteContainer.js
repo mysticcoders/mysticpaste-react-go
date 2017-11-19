@@ -2,7 +2,7 @@ import React, {PropTypes} from 'react';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 
-import * as pasteActions from '../actions/pasteActions';
+import {actions as pasteActions} from '../ducks/pastes';
 
 import {TextArea} from 'semantic-ui-react';
 import ActionBar from '../components/ActionBar';
@@ -39,8 +39,7 @@ class NewPasteContainer extends React.Component {
     }
 
     handleChange = (event, data) => {
-
-        const hasCode = data.id === 'code' && data.value !== '';
+        const hasCode = (data.id === 'code' || data.id === 'language') && data.value !== '';
 
         this.setState({
             [data.id]: data.value,
@@ -51,7 +50,11 @@ class NewPasteContainer extends React.Component {
     render() {
         return (
             <div>
-                <TextArea id="code" onChange={this.handleChange} placeholder='Code here...' style={{ width: '100%' }} rows="20"/>
+                <TextArea id="code"
+                          onChange={this.handleChange}
+                          placeholder='Code here...'
+                          style={{ width: '100%' }}
+                          rows="20"/>
 
                 <ActionBar
                     handleChange={this.handleChange}

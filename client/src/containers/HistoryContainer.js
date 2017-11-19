@@ -2,7 +2,8 @@ import React, {PropTypes} from 'react';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 
-import * as pasteActions from '../actions/pasteActions';
+import {actions as pasteActions} from '../ducks/pastes';
+import {actions as authActions} from '../ducks/auths';
 
 import {Container, Header, Radio, Divider, Button} from 'semantic-ui-react';
 
@@ -21,12 +22,7 @@ class HistoryContainer extends React.Component {
         if(this.props.next !== nextProps.next) return true;
         if(this.props.showSpam !== nextProps.showSpam) return true;
 
-        console.log("shouldComponentUpdate.this.props:", this.props);
-        console.log("shouldComponentUpdate.nextProps:", nextProps);
-
-        if(this.props.pastes.length !== nextProps.pastes.length) return true;
-
-        return false;
+        return this.props.pastes.length !== nextProps.pastes.length;
     }
 
     componentWillMount() {
@@ -101,7 +97,7 @@ HistoryContainer.propTypes = {
 };
 
 const mapDispatchToProps = (dispatch) => {
-    return {actions: bindActionCreators(pasteActions, dispatch)};
+    return {actions: bindActionCreators({...pasteActions, ...authActions}, dispatch)};
 };
 
 function mapStateToProps(state) {
@@ -115,7 +111,7 @@ function mapStateToProps(state) {
         pastes: pastes,
         admin: state.auth.admin,
         next: state.pastes.pasteList.next,
-        showSpam: state.pastes.showSpam,
+        showSpam: state.auth.showSpam,
     };
 }
 

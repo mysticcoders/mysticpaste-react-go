@@ -1,27 +1,5 @@
-import {
-    watchPasteHistory,
-    watchLoadPastes,
-    watchLoadPaste,
-    watchSavePaste,
-    watchDeletePaste,
-    watchCheckAdmin,
-    watchLogoutAdmin,
-    watchChangePasteAbuse,
-    watchLoadMorePastes,
-    watchChangePasteAbuseFlag,
-} from './pasteSaga';
+import { sagas as pasteSagas } from './pasteSaga';
 
 export default function* rootSaga() {
-    yield [
-        watchPasteHistory(),
-        watchLoadPastes(),
-        watchLoadPaste(),
-        watchSavePaste(),
-        watchDeletePaste(),
-        watchCheckAdmin(),
-        watchLogoutAdmin(),
-        watchChangePasteAbuse(),
-        watchLoadMorePastes(),
-        watchChangePasteAbuseFlag(),
-    ];
+    yield pasteSagas;
 }

@@ -1,10 +1,10 @@
-import React from 'react';
-import {connect} from 'react-redux';
-import {bindActionCreators} from 'redux';
+import React from "react";
+import {connect} from "react-redux";
+import {bindActionCreators} from "redux";
 
-import {Header, Container, Form, Button} from 'semantic-ui-react';
+import {Button, Container, Form, Header} from "semantic-ui-react";
 
-import * as pasteActions from '../actions/pasteActions';
+import {actions as pasteActions} from "../ducks/pastes";
 
 class AdminContainer extends React.Component {
 
@@ -28,20 +28,21 @@ class AdminContainer extends React.Component {
     };
 
     render() {
-        const { admin } = this.props;
+        const {admin} = this.props;
 
         return (
             <Container fluid>
                 <Form>
                     <Header size="huge">Admin</Header>
                     { !admin &&
-                        <div>
-                        <Form.Input id="admin_key" label="Admin Key" type="text" onChange={this.handleChange} placeholder='Admin Key' />
+                    <div>
+                        <Form.Input id="admin_key" label="Admin Key" type="text" onChange={this.handleChange}
+                                    placeholder='Admin Key'/>
                         <Button onClick={this.handleSubmit}>Submit</Button>
-                        </div>
+                    </div>
                     }
                     { admin &&
-                        <Button onClick={this.handleLogout}>Logout</Button>
+                    <Button onClick={this.handleLogout}>Logout</Button>
                     }
                 </Form>
             </Container>
