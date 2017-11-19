@@ -57,23 +57,6 @@ export default function pasteReducer(state = initialState, action) {
             return {...state, pasteList: {pastes: null, error: null, loading: true}};
         case types.LOAD_PASTES_SUCCESS:
             return {...state, pasteList: {pastes: action.payload.results, next: action.payload.next, previous: action.payload.previous, error: null, loading: false}};
-        case types.SHOW_SPAM_PASTES:
-            return {...state, showSpam: true};
-        case types.HIDE_SPAM_PASTES:
-            return {...state, showSpam: false};
-        case types.CHANGE_PASTE_ABUSE:
-            return {...state, pasteAbuseChanged: false};
-        case types.CHANGE_PASTE_ABUSE_SUCCESS:
-            return {...state, pasteAbuseChanged: true};
-        case types.CHANGE_PASTE_ABUSE_CLEAR:
-            return {...state, pasteAbuseChanged: null};
-        case types.CHECK_ADMIN:
-        case types.CHECK_ADMIN_FAILURE:
-        case types.CHECK_ADMIN_ERROR:
-        case types.LOGOUT_ADMIN:
-            return {...state, admin: false};
-        case types.CHECK_ADMIN_SUCCESS:
-            return {...state, admin: true};
         default:
             return state;
     }
