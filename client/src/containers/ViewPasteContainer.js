@@ -2,7 +2,8 @@ import React, {PropTypes} from 'react';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 
-import * as pasteActions from '../actions/pasteActions';
+import {actions as pasteActions} from '../ducks/pastes';
+import {actions as authActions} from '../ducks/auths';
 
 import PasteEntry from '../components/PasteEntry';
 
@@ -29,7 +30,7 @@ class ViewPasteContainer extends React.Component {
     handleCancel = () => this.setState({ open: false });
 
     handleChangePasteAbuse() {
-        this.props.actions.changePasteAbuse(this.props.pasteId, !this.props.paste.abuse);
+        this.props.actions.changePasteAbuse(this.props.pasteId, !this.props.paste.paste.abuse);
         this.setState({
             open: false,
         });
@@ -52,6 +53,8 @@ class ViewPasteContainer extends React.Component {
                 <Header size="large">Loading...</Header>
             );
         }
+
+        console.log(this.props.paste);
 
         let paste = this.props.paste.paste;
 
@@ -93,7 +96,7 @@ ViewPasteContainer.propTypes = {
 };
 
 const mapDispatchToProps = (dispatch) => {
-    return {actions: bindActionCreators(pasteActions, dispatch)};
+    return {actions: bindActionCreators({...pasteActions, ...authActions}, dispatch)};
 };
 
 function mapStateToProps(state) {
