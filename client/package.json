@@ -4,7 +4,7 @@
   "private": true,
   "dependencies": {
     "axios": "0.18.1",
-    "bootstrap": "^3.3.7",
+    "bootstrap": "^3.4.1",
     "font-awesome": "4.7.0",
     "immutability-helper": "2.0.0",
     "moment": "^2.16.0",
